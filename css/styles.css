@@ -200,6 +200,7 @@ textarea {
   justify-content: center;
   min-height: 680px;
   grid-area: wheel;
+  padding: 24px; /* luft inde i widget */
 }
 #formSection { grid-area: form; }
 #listSection { grid-area: acts; }
@@ -317,6 +318,13 @@ svg {
   max-width: 100%;
   height: auto;
   overflow: visible;
+}
+
+/* Hjul centreret med luft til widget-kanter */
+.wheel-wrap #wheel {
+  display: block;
+  margin: 0 auto;
+  max-width: calc(100% - 40px);
 }
 
 .list {
