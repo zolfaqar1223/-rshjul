@@ -20,6 +20,12 @@ let currentIndex = -1;
 let items = [];
 let notes = {};
 let zoomLevel = 1;
+let panX = 0;
+let panY = 0;
+let isPanMode = false;
+let isPanning = false;
+let lastMouseX = 0;
+let lastMouseY = 0;
 // no timeline renderer
 
 function renderListReadOnly(listEl, itemsToShow) {
@@ -156,7 +162,7 @@ function render(focusedMonth = null) {
   drawWheel(wheelSvg, items, callbacks, { focusedMonth });
   // Apply zoom on customer wheel similar to main
   wheelSvg.style.transformOrigin = '50% 50%';
-  wheelSvg.style.transform = `scale(${zoomLevel})`;
+  wheelSvg.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomLevel})`;
   const listItems = focusedMonth ? items.filter(x => x.month === focusedMonth) : items;
   renderListReadOnly(listContainer, listItems);
   renderMonthNotes(monthNotesList);
@@ -200,8 +206,11 @@ document.addEventListener('DOMContentLoaded', () => {
     btnMinus.textContent = '−';
     const btnPlus = document.createElement('button');
     btnPlus.textContent = '+';
+    const btnPan = document.createElement('button');
+    btnPan.textContent = 'Pan';
     zc.appendChild(btnMinus);
     zc.appendChild(btnPlus);
+    zc.appendChild(btnPan);
     wrap.appendChild(zc);
     btnMinus.addEventListener('click', () => {
       zoomLevel = Math.max(0.6, Math.round((zoomLevel - 0.1) * 10) / 10);
@@ -209,6 +218,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     btnPlus.addEventListener('click', () => {
       zoomLevel = Math.min(1.6, Math.round((zoomLevel + 0.1) * 10) / 10);
+      render();
+    });
+    btnPan.addEventListener('click', () => {
+      isPanMode = !isPanMode;
+      wrap.style.cursor = isPanMode ? 'grab' : '';
+    });
+    wrap.addEventListener('mousedown', e => {
+      if (!isPanMode) return;
+      isPanning = true;
+      lastMouseX = e.clientX;
+      lastMouseY = e.clientY;
+      wrap.style.cursor = 'grabbing';
+    });
+    window.addEventListener('mousemove', e => {
+      if (!isPanning) return;
+      const dx = e.clientX - lastMouseX;
+      const dy = e.clientY - lastMouseY;
+      panX += dx;
+      panY += dy;
+      lastMouseX = e.clientX;
+      lastMouseY = e.clientY;
+      render();
+    });
+    window.addEventListener('mouseup', () => {
+      if (!isPanning) return;
+      isPanning = false;
+      wrap.style.cursor = isPanMode ? 'grab' : '';
       render();
     });
   }

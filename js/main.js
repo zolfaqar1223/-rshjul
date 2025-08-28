@@ -28,6 +28,13 @@ let focusedMonth = null;
 let activeCategory = 'Alle';
 let zoomLevel = 1;
 let settings = {};
+// Pan state for wheel
+let panX = 0;
+let panY = 0;
+let isPanMode = false;
+let isPanning = false;
+let lastMouseX = 0;
+let lastMouseY = 0;
 
 // DOM‑cache
 const dateInput = document.getElementById('date');
@@ -256,23 +263,55 @@ function setupZoomControls() {
     btnMinus.textContent = '−';
     const btnPlus = document.createElement('button');
     btnPlus.textContent = '+';
+    const btnPan = document.createElement('button');
+    btnPan.textContent = 'Pan';
     zc.appendChild(btnMinus);
     zc.appendChild(btnPlus);
+    zc.appendChild(btnPan);
     wrap.appendChild(zc);
     btnMinus.addEventListener('click', () => {
       zoomLevel = Math.max(0.6, Math.round((zoomLevel - 0.1) * 10) / 10);
-      applyZoom();
+      applyTransform();
     });
     btnPlus.addEventListener('click', () => {
       zoomLevel = Math.min(1.8, Math.round((zoomLevel + 0.1) * 10) / 10);
-      applyZoom();
+      applyTransform();
+    });
+    btnPan.addEventListener('click', () => {
+      isPanMode = !isPanMode;
+      wrap.style.cursor = isPanMode ? 'grab' : '';
+    });
+    wrap.addEventListener('mousedown', e => {
+      if (!isPanMode) return;
+      isPanning = true;
+      lastMouseX = e.clientX;
+      lastMouseY = e.clientY;
+      wrap.style.cursor = 'grabbing';
+    });
+    window.addEventListener('mousemove', e => {
+      if (!isPanning) return;
+      const dx = e.clientX - lastMouseX;
+      const dy = e.clientY - lastMouseY;
+      panX += dx;
+      panY += dy;
+      lastMouseX = e.clientX;
+      lastMouseY = e.clientY;
+      applyTransform();
+    });
+    window.addEventListener('mouseup', () => {
+      if (!isPanning) return;
+      isPanning = false;
+      wrap.style.cursor = isPanMode ? 'grab' : '';
+      applyTransform();
     });
   }
 }
-function applyZoom() {
+function applyTransform() {
   wheelSvg.style.transformOrigin = '50% 50%';
-  wheelSvg.style.transform = `scale(${zoomLevel})`;
+  wheelSvg.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomLevel})`;
   settings.zoomLevel = zoomLevel;
+  settings.panX = panX;
+  settings.panY = panY;
   writeSettings(settings);
 }
 
@@ -285,7 +324,7 @@ function setupWheelScrollZoom() {
       e.preventDefault();
       const delta = e.deltaY > 0 ? -0.1 : 0.1;
       zoomLevel = Math.max(0.6, Math.min(1.8, Math.round((zoomLevel + delta) * 10) / 10));
-      applyZoom();
+      applyTransform();
     }
   }, { passive: false });
 }
@@ -374,7 +413,7 @@ function render() {
     }
   }, { focusedMonth });
 
-  applyZoom();
+  applyTransform();
 
   // Collapsible activities with animation
   const aToggle = document.getElementById('activitiesToggle');
@@ -399,6 +438,8 @@ document.addEventListener('DOMContentLoaded', () => {
   settings = readSettings();
   if (settings.activeCategory) activeCategory = settings.activeCategory;
   if (settings.zoomLevel) zoomLevel = settings.zoomLevel;
+  if (typeof settings.panX === 'number') panX = settings.panX;
+  if (typeof settings.panY === 'number') panY = settings.panY;
   if (typeof settings.activitiesExpanded === 'undefined') settings.activitiesExpanded = true;
   // setup UI
   initSelects();
