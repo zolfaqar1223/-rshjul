@@ -20,6 +20,7 @@
         Import JSON
         <input id="fileJson" type="file" accept="application/json" />
       </label>
+      <button id="btnShare">Del med kunde</button>
     </div>
   </header>
   <main class="wrap">
@@ -67,6 +68,19 @@
       <div class="modal-actions">
         <button id="btnSaveNotes">Gem noter</button>
         <button class="ghost" id="btnCloseModal">Luk</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Del med kunde modal -->
+  <div class="modal" id="shareModal">
+    <div class="sheet glass">
+      <h2>Del med kunde</h2>
+      <p>Vælg hvordan du vil dele årshjulet med kunden.</p>
+      <div class="modal-actions">
+        <button id="btnSharePdf">Åbn kundevisning som PDF</button>
+        <button class="ghost" id="btnShareLink">Åbn kundevisning</button>
+        <button class="ghost" id="btnShareClose">Luk</button>
       </div>
     </div>
   </div>
