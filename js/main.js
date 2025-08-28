@@ -106,16 +106,11 @@ function resetForm() {
 }
 
 function saveItem() {
-  let month = monthSelect.value;
-  let week = 1;
-  // Udled måned/uge ud fra valgt dato, hvis udfyldt
-  if (dateInput && dateInput.value) {
-    const d = new Date(dateInput.value);
-    const mIdx = d.getMonth();
-    month = MONTHS[mIdx];
-    const day = d.getDate();
-    week = Math.max(1, Math.min(5, Math.ceil(day / 7)));
-  }
+  // Udled måned/uge ud fra valgt dato eller brug dags dato
+  const baseDate = (dateInput && dateInput.value) ? new Date(dateInput.value) : new Date();
+  const month = MONTHS[baseDate.getMonth()];
+  const day = baseDate.getDate();
+  const week = Math.max(1, Math.min(5, Math.ceil(day / 7)));
   const title = titleInput.value.trim();
   const cat = categorySelect.value;
   const note = notesInput.value.trim();
@@ -277,7 +272,6 @@ function render() {
   renderList(listContainer, filtered, {
     onEdit: item => {
       editingId = item.id;
-      monthSelect.value = item.month;
       titleInput.value = item.title;
       categorySelect.value = item.cat;
       notesInput.value = item.note || '';
