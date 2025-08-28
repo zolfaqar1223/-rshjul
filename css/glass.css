@@ -98,5 +98,3 @@ button:hover {
 .zoom-controls button:hover {
   box-shadow: 0 0 12px var(--neon);
 }
-
-/* Small focus ring overlay style (applied inline via wheel.js) */
