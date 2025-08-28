@@ -20,10 +20,19 @@
       <h3>Årshjul</h3>
       <svg id="wheel" viewBox="0 0 700 700" aria-label="Årshjul"></svg>
     </section>
+    <section class="card glass resizable" id="monthNotesSection">
+      <h3 style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <span>Månedsnoter</span>
+      </h3>
+      <div id="monthNotesList" class="list"></div>
+    </section>
     <section class="card glass resizable" id="listSection">
       <h3 style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
         <span>Aktiviteter</span>
-        <button class="ghost" id="activitiesToggle" style="padding:4px 10px;">Skjul/vis</button>
+        <span style="display:inline-flex;gap:6px;align-items:center;">
+          <button class="ghost" id="seeAllCustomer" style="padding:4px 10px;">Se alle</button>
+          <button class="ghost" id="activitiesToggle" style="padding:4px 10px;">Skjul/vis</button>
+        </span>
       </h3>
       <div id="list" class="list"></div>
     </section>
@@ -40,6 +49,16 @@
         <div class="viewer-attachments" id="viewerAttach"></div>
         <div class="viewer-actions">
           <button class="ghost" id="viewerClose">Luk</button>
+        </div>
+      </div>
+    </div>
+    <!-- Week items modal (read-only list) -->
+    <div class="viewer-modal" id="weekModal">
+      <div class="viewer-sheet glass">
+        <h3 id="weekTitle"></h3>
+        <div id="weekList" class="list"></div>
+        <div class="viewer-actions">
+          <button class="ghost" id="weekClose">Luk</button>
         </div>
       </div>
     </div>

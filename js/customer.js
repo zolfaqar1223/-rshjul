@@ -4,6 +4,8 @@ import { drawWheel } from './wheel.js';
 
 const wheelSvg = document.getElementById('wheel');
 const listContainer = document.getElementById('list');
+const monthNotesList = document.getElementById('monthNotesList');
+const seeAllBtn = document.getElementById('seeAllCustomer');
 const viewerModal = document.getElementById('viewerModal');
 const viewerTitle = document.getElementById('viewerTitle');
 const viewerMeta = document.getElementById('viewerMeta');
@@ -91,6 +93,33 @@ function renderListReadOnly(listEl, itemsToShow) {
   });
 }
 
+function renderMonthNotes(listEl) {
+  if (!listEl) return;
+  listEl.innerHTML = '';
+  const monthsWithNotes = Object.keys(notes || {}).filter(k => (notes[k] || '').trim().length > 0);
+  if (monthsWithNotes.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'item glass';
+    empty.textContent = 'Ingen månedsnoter';
+    listEl.appendChild(empty);
+    return;
+  }
+  monthsWithNotes.forEach(m => {
+    const el = document.createElement('div');
+    el.className = 'item glass';
+    el.style.flexDirection = 'column';
+    el.style.gap = '6px';
+    const title = document.createElement('strong');
+    title.textContent = m;
+    const n = document.createElement('div');
+    n.className = 'note';
+    n.textContent = notes[m];
+    el.appendChild(title);
+    el.appendChild(n);
+    listEl.appendChild(el);
+  });
+}
+
 function openViewer(item) {
   if (!viewerModal) return;
   viewerTitle.textContent = item.title;
@@ -141,6 +170,7 @@ function render(focusedMonth = null) {
   drawWheel(wheelSvg, items, callbacks, { focusedMonth });
   const listItems = focusedMonth ? items.filter(x => x.month === focusedMonth) : items;
   renderListReadOnly(listContainer, listItems);
+  renderMonthNotes(monthNotesList);
   // Collapsible activities (customer view)
   const aToggle = document.getElementById('activitiesToggle');
   const listEl = document.getElementById('list');
@@ -174,6 +204,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   const vc = document.getElementById('viewerClose');
   if (vc) vc.addEventListener('click', closeViewer);
+  const seeAll = () => render(null);
+  if (seeAllBtn) seeAllBtn.addEventListener('click', seeAll);
   if (viewerModal) {
     viewerModal.addEventListener('click', (e) => {
       if (e.target === viewerModal) closeViewer();
