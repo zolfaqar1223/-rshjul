@@ -21,6 +21,7 @@ export function renderList(listEl, items, callbacks) {
   const sorted = sortItems(items);
   sorted.forEach(it => {
     const el = tpl.content.firstElementChild.cloneNode(true);
+    el.classList.add('glass');
     el.dataset.id = it.id;
     el.querySelector('.title').textContent = it.title;
     el.querySelector('.meta').textContent = `${it.month} · Uge ${it.week} · ${it.cat}`;
