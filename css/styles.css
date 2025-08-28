@@ -1,343 +1,101 @@
-/* Globale stilregler og layout til KMD Årshjul.  */
-:root {
-  --bg: #002a2a;
-  --panel: #0a3834;
-  --muted: #1b4d45;
-  --text: #e5f2f0;
-  --accent: #02c09a;
-  --q1: #0f3c35;
-  --q2: #1a6b5b;
-  --q3: #2b9b86;
-  --q4: #84d3c1;
-}
+// store.js
+// Fælles data og persistens-funktioner for KMD Årshjul. Her defineres
+// konstante værdier som måneder og kategorier samt hjælpefunktioner
+// til at læse og skrive til browserens localStorage.
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+export const MONTHS = [
+  'Januar', 'Februar', 'Marts', 'April', 'Maj', 'Juni',
+  'Juli', 'August', 'September', 'Oktober', 'November', 'December'
+];
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: Inter, system-ui, sans-serif;
-  line-height: 1.4;
-  min-height: 100vh;
-}
+export const CATS = [
+  'Releasemøde',
+  'Roadmapmøde',
+  'Netværksmøde',
+  'KTU',
+  'Onboarding',
+  'Rapportmøde',
+  'Andet'
+];
 
-header {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 12px 16px;
-  background: linear-gradient(180deg, rgba(0, 20, 25, 0.9), rgba(0, 20, 25, 0.6));
-  border-bottom: 1px solid var(--panel);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
+const ITEMS_KEY = 'aarshjul.admin.items';
+const NOTES_KEY = 'aarshjul.admin.notes';
 
-header .logo {
-  width: 108px;
-  height: 36px;
-  display: inline-block;
-  background: var(--q2);
-  border-radius: 6px;
-  position: relative;
-}
-header .logo::after {
-  content: "KMD";
-  position: absolute;
-  left: 12px;
-  top: 5px;
-  font-weight: 900;
-  font-size: 22px;
-  letter-spacing: 0.5px;
-  color: #fff;
-}
-
-header h1 {
-  font-size: 20px;
-  font-weight: 700;
-}
-
-header .right {
-  margin-left: auto;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-button {
-  background: var(--accent);
-  border: none;
-  padding: 8px 14px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 600;
-  color: var(--bg);
-  line-height: 1;
-}
-
-button.ghost {
-  background: transparent;
-  border: 1px solid var(--muted);
-  color: var(--text);
-}
-
-button.ghost:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.import-label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-.import-label input {
-  display: none;
-}
-
-.wrap {
-  display: grid;
-  grid-template-columns: 320px 1fr 380px;
-  gap: 16px;
-  padding: 16px;
-}
-
-.card {
-  background: var(--panel);
-  border: 1px solid var(--muted);
-  border-radius: 14px;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-height: 0;
-}
-
-h3 {
-  font-size: 18px;
-  font-weight: 600;
-}
-
-label {
-  font-size: 13px;
-  display: block;
-  margin-top: 6px;
-}
-
-input,
-select,
-textarea {
-  width: 100%;
-  margin-top: 4px;
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid var(--muted);
-  background: #0f2f2a;
-  color: var(--text);
-  font-family: inherit;
-  font-size: 14px;
-}
-
-textarea {
-  min-height: 100px;
-  resize: vertical;
-}
-
-.form-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 6px;
-}
-
-.chip {
-  background: #0f2f2a;
-  border: 1px solid var(--muted);
-  padding: 6px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  cursor: pointer;
-  user-select: none;
-}
-
-.chip:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.wheel-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 600px;
-}
-
-svg {
-  max-width: 100%;
-  height: auto;
-  overflow: visible;
-}
-
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 70vh;
-  overflow: auto;
-}
-
-.item {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--muted);
-  border-radius: 10px;
-  padding: 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
-}
-
-.item-content {
-  flex: 1 1 auto;
-}
-
-.item strong {
-  font-size: 14px;
-}
-
-.item .meta,
-.item .note {
-  font-size: 12px;
-  opacity: 0.85;
-  margin-top: 2px;
-}
-
-.actions {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.item .actions button {
-  font-size: 12px;
-  padding: 4px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-  line-height: 1;
-}
-
-.item button[data-act="del"] {
-  background: transparent;
-  color: #ff6b6b;
-  border: 1px solid #ff6b6b;
-}
-.item button[data-act="del"]:hover {
-  background: #ff6b6b;
-  color: var(--bg);
-}
-
-.item button.ghost {
-  background: transparent;
-  border: 1px solid var(--muted);
-  color: var(--text);
-}
-.item button.ghost:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.modal {
-  position: fixed;
-  inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 100;
-}
-.modal.open {
-  display: flex;
-}
-
-.sheet {
-  background: var(--panel);
-  border: 1px solid var(--muted);
-  border-radius: 16px;
-  width: min(90vw, 860px);
-  max-height: 90vh;
-  overflow: auto;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.sheet h2 {
-  font-size: 20px;
-  font-weight: 700;
-}
-.sheet h3 {
-  font-size: 16px;
-  font-weight: 600;
-  margin-top: 12px;
-}
-.sheet .notes {
-  width: 100%;
-  min-height: 140px;
-  border-radius: 8px;
-  border: 1px solid var(--muted);
-  padding: 8px;
-  background: #0f2f2a;
-  color: var(--text);
-  resize: vertical;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  margin-top: 10px;
-}
-
-@media print {
-  header,
-  .chips,
-  .actions,
-  .right,
-  label,
-  button,
-  select,
-  input,
-  textarea {
-    display: none !important;
+/**
+ * Læs aktiviteter fra localStorage.
+ * @returns {Array<Object>} Listen af aktiviteter
+ */
+export function readItems() {
+  try {
+    const raw = localStorage.getItem(ITEMS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (err) {
+    console.error('Kunne ikke læse items fra localStorage', err);
+    return [];
   }
-  .wrap {
-    grid-template-columns: 1fr;
-    padding: 0;
+}
+
+/**
+ * Gem aktiviteter til localStorage.
+ * @param {Array<Object>} data
+ */
+export function writeItems(data) {
+  try {
+    localStorage.setItem(ITEMS_KEY, JSON.stringify(data));
+  } catch (err) {
+    console.error('Kunne ikke skrive items til localStorage', err);
   }
-  body {
-    background: #fff;
-    color: #000;
+}
+
+/**
+ * Læs noter pr. måned fra localStorage.
+ * @returns {Object}
+ */
+export function readNotes() {
+  try {
+    const raw = localStorage.getItem(NOTES_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch (err) {
+    console.error('Kunne ikke læse noter fra localStorage', err);
+    return {};
   }
-  .card {
-    border: none;
-    background: transparent;
-    box-shadow: none;
+}
+
+/**
+ * Gem noter til localStorage.
+ * @param {Object} notes
+ */
+export function writeNotes(notes) {
+  try {
+    localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+  } catch (err) {
+    console.error('Kunne ikke skrive noter til localStorage', err);
   }
+}
+
+/**
+ * Generer en unik ID til en aktivitet. Bruger native crypto.randomUUID
+ * hvis tilgængelig, ellers falder tilbage til tidsstempel.
+ * @returns {string}
+ */
+export function generateId() {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return Date.now().toString();
+}
+
+/**
+ * Hjælpefunktion til at sortere aktiviteter efter måned, uge og titel.
+ * @param {Array<Object>} items
+ * @returns {Array<Object>} sorteret liste
+ */
+export function sortItems(items) {
+  return [...items].sort((a, b) => {
+    const ma = MONTHS.indexOf(a.month);
+    const mb = MONTHS.indexOf(b.month);
+    if (ma !== mb) return ma - mb;
+    if (a.week !== b.week) return a.week - b.week;
+    return a.title.localeCompare(b.title);
+  });
 }
