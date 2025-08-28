@@ -529,3 +529,24 @@ body.customer #listSection { grid-area: acts; }
     box-shadow: none;
   }
 }
+
+/* Timeline */
+.timeline {
+  border: 1px solid var(--muted);
+  border-radius: 10px;
+  padding: 10px;
+  background: #0f2f2a;
+  max-height: 700px;
+  overflow: auto;
+}
+.timeline .time-row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 10px;
+  align-items: start;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.timeline .time-row:last-child { border-bottom: none; }
+.timeline .time-label { font-size: 12px; opacity: 0.9; }
+.timeline .time-items { display: flex; flex-direction: column; gap: 8px; }

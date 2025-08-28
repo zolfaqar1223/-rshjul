@@ -3,6 +3,11 @@ import { MONTHS, readItems, readNotes, CAT_COLORS } from './store.js';
 import { drawWheel } from './wheel.js';
 
 const wheelSvg = document.getElementById('wheel');
+const wheelWrap = document.getElementById('wheelWrap');
+const timelineWrap = document.getElementById('timelineWrap');
+const timelineEl = document.getElementById('timeline');
+const tabWheel = document.getElementById('tabWheel');
+const tabTimeline = document.getElementById('tabTimeline');
 const listContainer = document.getElementById('list');
 const monthNotesList = document.getElementById('monthNotesList');
 const seeAllBtn = document.getElementById('seeAllCustomer');
@@ -18,6 +23,34 @@ let currentIndex = -1;
 
 let items = [];
 let notes = {};
+function renderTimeline(allItems) {
+  if (!timelineEl) return;
+  timelineEl.innerHTML = '';
+  const byMonth = {};
+  allItems.forEach(it => {
+    (byMonth[it.month] = byMonth[it.month] || []).push(it);
+  });
+  Object.keys(byMonth).forEach(m => {
+    const row = document.createElement('div');
+    row.className = 'time-row';
+    const label = document.createElement('div');
+    label.className = 'time-label';
+    label.textContent = m;
+    const itemsCol = document.createElement('div');
+    itemsCol.className = 'time-items';
+    byMonth[m].sort((a,b) => a.week - b.week).forEach(it => {
+      const d = document.createElement('div');
+      d.className = 'item glass';
+      d.style.cursor = 'pointer';
+      d.innerHTML = `<div class="item-content"><strong>${it.title}</strong><div class="meta">Uge ${it.week} · ${it.cat}</div></div>`;
+      d.addEventListener('click', () => openViewerById(it));
+      itemsCol.appendChild(d);
+    });
+    row.appendChild(label);
+    row.appendChild(itemsCol);
+    timelineEl.appendChild(row);
+  });
+}
 
 function renderListReadOnly(listEl, itemsToShow) {
   listEl.innerHTML = '';
@@ -189,6 +222,24 @@ document.addEventListener('DOMContentLoaded', () => {
   if (vc) vc.addEventListener('click', closeViewer);
   const seeAll = () => render(null);
   if (seeAllBtn) seeAllBtn.addEventListener('click', seeAll);
+
+  // Tabs between wheel and timeline
+  function activate(view) {
+    if (view === 'wheel') {
+      wheelWrap.style.display = '';
+      timelineWrap.style.display = 'none';
+      tabWheel.classList.add('active');
+      tabTimeline.classList.remove('active');
+    } else {
+      wheelWrap.style.display = 'none';
+      timelineWrap.style.display = '';
+      tabTimeline.classList.add('active');
+      tabWheel.classList.remove('active');
+      renderTimeline(items);
+    }
+  }
+  if (tabWheel) tabWheel.addEventListener('click', () => activate('wheel'));
+  if (tabTimeline) tabTimeline.addEventListener('click', () => activate('timeline'));
   if (viewerModal) {
     viewerModal.addEventListener('click', (e) => {
       if (e.target === viewerModal) closeViewer();
