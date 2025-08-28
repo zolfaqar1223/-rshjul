@@ -43,28 +43,7 @@ function renderListReadOnly(listEl, itemsToShow) {
       currentMonth = it.month;
       const header = document.createElement('div');
       header.className = 'group-title';
-      header.style.display = 'flex';
-      header.style.alignItems = 'center';
-      header.style.justifyContent = 'space-between';
-      const title = document.createElement('span');
-      title.textContent = currentMonth;
-      header.appendChild(title);
-      const mn = (notes && notes[currentMonth]) ? document.createElement('button') : null;
-      if (mn) {
-        mn.className = 'ghost';
-        mn.textContent = 'Månedsnoter';
-        mn.style.fontSize = '12px';
-        mn.addEventListener('click', () => {
-          // Open viewer with month notes only
-          openViewer({
-            title: `Månedsnoter · ${currentMonth}`,
-            month: currentMonth,
-            cat: '',
-            note: notes[currentMonth] || ''
-          });
-        });
-        header.appendChild(mn);
-      }
+      header.textContent = currentMonth;
       listEl.appendChild(header);
     }
     const el = document.createElement('div');
@@ -116,6 +95,10 @@ function renderMonthNotes(listEl) {
     n.textContent = notes[m];
     el.appendChild(title);
     el.appendChild(n);
+    el.style.cursor = 'pointer';
+    el.addEventListener('click', () => {
+      openViewer({ title: `Månedsnoter · ${m}`, month: m, cat: '', note: notes[m] || '' });
+    });
     listEl.appendChild(el);
   });
 }
