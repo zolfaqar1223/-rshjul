@@ -107,16 +107,16 @@ button.ghost:hover {
 
 .wrap {
   display: grid;
-  grid-template-columns: 320px 1fr 380px;
-  gap: 16px;
-  padding: 16px;
+  grid-template-columns: 1fr 420px;
+  gap: 20px;
+  padding: 20px;
 }
 
 .card {
   background: var(--panel);
   border: 1px solid var(--muted);
-  border-radius: 14px;
-  padding: 14px;
+  border-radius: 16px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -124,8 +124,8 @@ button.ghost:hover {
 }
 
 h3 {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 700;
 }
 
 label {
@@ -300,7 +300,7 @@ svg {
 .list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   max-height: 70vh;
   overflow: auto;
 }
@@ -309,11 +309,11 @@ svg {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--muted);
   border-radius: 10px;
-  padding: 8px;
+  padding: 12px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 8px;
+  gap: 12px;
 }
 
 .item-content {
