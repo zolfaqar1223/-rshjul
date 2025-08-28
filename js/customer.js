@@ -208,6 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnPlus.textContent = '+';
     const btnPan = document.createElement('button');
     btnPan.textContent = 'Pan';
+    btnPan.className = 'pan';
     zc.appendChild(btnMinus);
     zc.appendChild(btnPlus);
     zc.appendChild(btnPan);
@@ -223,6 +224,8 @@ document.addEventListener('DOMContentLoaded', () => {
     btnPan.addEventListener('click', () => {
       isPanMode = !isPanMode;
       wrap.style.cursor = isPanMode ? 'grab' : '';
+      if (isPanMode) btnPan.classList.add('active');
+      else btnPan.classList.remove('active');
     });
     wrap.addEventListener('mousedown', e => {
       if (!isPanMode) return;
