@@ -159,7 +159,7 @@ function exportJson() {
   const blob = new Blob([JSON.stringify(items, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'aarshjul.json';
+  a.download = 'årshjul.json';
   a.click();
   URL.revokeObjectURL(a.href);
 }

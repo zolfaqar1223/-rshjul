@@ -18,8 +18,11 @@ export const CATS = [
   'Andet'
 ];
 
-const ITEMS_KEY = 'aarshjul.admin.items';
-const NOTES_KEY = 'aarshjul.admin.notes';
+const ITEMS_KEY = 'årshjul.admin.items';
+const NOTES_KEY = 'årshjul.admin.notes';
+// Legacy keys kept for backward-compatible reads
+const ITEMS_KEY_OLD = 'aarshjul.admin.items';
+const NOTES_KEY_OLD = 'aarshjul.admin.notes';
 
 /**
  * Læs aktiviteter fra localStorage.
@@ -27,8 +30,11 @@ const NOTES_KEY = 'aarshjul.admin.notes';
  */
 export function readItems() {
   try {
+    // Prefer new key; fallback to legacy
     const raw = localStorage.getItem(ITEMS_KEY);
-    return raw ? JSON.parse(raw) : [];
+    if (raw) return JSON.parse(raw);
+    const legacy = localStorage.getItem(ITEMS_KEY_OLD);
+    return legacy ? JSON.parse(legacy) : [];
   } catch (err) {
     console.error('Kunne ikke læse items fra localStorage', err);
     return [];
@@ -42,6 +48,8 @@ export function readItems() {
 export function writeItems(data) {
   try {
     localStorage.setItem(ITEMS_KEY, JSON.stringify(data));
+    // Clean up legacy key if present
+    try { localStorage.removeItem(ITEMS_KEY_OLD); } catch {}
   } catch (err) {
     console.error('Kunne ikke skrive items til localStorage', err);
   }
@@ -54,7 +62,9 @@ export function writeItems(data) {
 export function readNotes() {
   try {
     const raw = localStorage.getItem(NOTES_KEY);
-    return raw ? JSON.parse(raw) : {};
+    if (raw) return JSON.parse(raw);
+    const legacy = localStorage.getItem(NOTES_KEY_OLD);
+    return legacy ? JSON.parse(legacy) : {};
   } catch (err) {
     console.error('Kunne ikke læse noter fra localStorage', err);
     return {};
@@ -68,6 +78,7 @@ export function readNotes() {
 export function writeNotes(notes) {
   try {
     localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+    try { localStorage.removeItem(NOTES_KEY_OLD); } catch {}
   } catch (err) {
     console.error('Kunne ikke skrive noter til localStorage', err);
   }
