@@ -21,6 +21,7 @@ export function renderList(listEl, items, callbacks) {
   const sorted = sortItems(items);
   sorted.forEach(it => {
     const el = tpl.content.firstElementChild.cloneNode(true);
+    // Sikr at glass-stil altid tilføjes (også hvis template ikke er opdateret)
     el.classList.add('glass');
     el.dataset.id = it.id;
     el.querySelector('.title').textContent = it.title;
