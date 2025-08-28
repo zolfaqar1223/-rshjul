@@ -41,12 +41,7 @@ const wheelSvg = document.getElementById('wheel');
 
 // ====== UI initialisering ======
 function initSelects() {
-  MONTHS.forEach(m => {
-    const opt = document.createElement('option');
-    opt.value = m;
-    opt.textContent = m;
-    monthSelect.appendChild(opt);
-  });
+  // Måned-felt fjernet – dato er nok
   CATS.forEach(c => {
     const opt = document.createElement('option');
     opt.value = c;
@@ -328,6 +323,18 @@ function render() {
   }, { focusedMonth });
 
   applyZoom();
+
+  // Collapsible upcoming
+  const toggle = document.getElementById('upcomingToggle');
+  const up = document.getElementById('upcoming');
+  if (toggle && up) {
+    if (!toggle.dataset.bound) {
+      toggle.dataset.bound = '1';
+      toggle.addEventListener('click', () => {
+        up.style.display = up.style.display === 'none' ? '' : 'none';
+      });
+    }
+  }
 
   // Calendar/upcoming removed
 }

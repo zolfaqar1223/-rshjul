@@ -25,16 +25,20 @@ export function renderList(listEl, items, callbacks) {
     el.classList.add('glass');
     el.dataset.id = it.id;
     el.querySelector('.title').textContent = it.title;
-    el.querySelector('.meta').textContent = `${it.month} · Uge ${it.week} · ${it.cat}`;
+    const meta = el.querySelector('.meta');
+    const badge = document.createElement('span');
+    badge.className = 'chip';
+    badge.textContent = it.cat;
+    badge.style.marginRight = '6px';
+    meta.innerHTML = '';
+    meta.appendChild(badge);
+    meta.append(`${it.month} · Uge ${it.week}`);
     el.querySelector('.note').textContent = it.note || '';
     // Rediger
     el.querySelector('[data-act="edit"]').addEventListener('click', () => {
       callbacks.onEdit(it);
     });
-    // Åbn måned
-    el.querySelector('[data-act="open"]').addEventListener('click', () => {
-      callbacks.onOpen(it.month);
-    });
+    // Åbn måned knap fjernet – edit åbner direkte
     // Slet
     el.querySelector('[data-act="del"]').addEventListener('click', () => {
       callbacks.onDelete(it.id);
