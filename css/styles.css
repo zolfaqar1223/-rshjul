@@ -116,10 +116,10 @@ button.ghost:hover {
   background: var(--panel);
   border: 1px solid var(--muted);
   border-radius: 16px;
-  padding: 18px;
+  padding: 22px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   min-height: 0;
 }
 
@@ -309,7 +309,7 @@ svg {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--muted);
   border-radius: 10px;
-  padding: 12px;
+  padding: 14px 16px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
