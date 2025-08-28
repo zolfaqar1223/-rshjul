@@ -446,6 +446,44 @@ svg {
   margin-top: 10px;
 }
 
+body.customer .wrap {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  grid-template-rows: auto;
+  grid-template-areas: "wheel acts";
+  gap: 20px;
+}
+body.customer .wheel-wrap { grid-area: wheel; }
+body.customer #listSection { grid-area: acts; }
+
+/* Read-only item modal for customer */
+.customer .viewer-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.6);
+  z-index: 120;
+}
+.customer .viewer-modal.open { display: flex; }
+.customer .viewer-sheet {
+  background: var(--panel);
+  border: 1px solid var(--muted);
+  border-radius: 16px;
+  width: min(90vw, 720px);
+  max-height: 90vh;
+  overflow: auto;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.customer .viewer-sheet h3 { font-size: 18px; }
+.customer .viewer-meta { font-size: 13px; opacity: .85; }
+.customer .viewer-note { font-size: 13px; opacity: .95; white-space: pre-wrap; }
+.customer .viewer-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+
 @media print {
   header,
   .chips,

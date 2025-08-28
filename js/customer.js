@@ -4,6 +4,10 @@ import { drawWheel } from './wheel.js';
 
 const wheelSvg = document.getElementById('wheel');
 const listContainer = document.getElementById('list');
+const viewerModal = document.getElementById('viewerModal');
+const viewerTitle = document.getElementById('viewerTitle');
+const viewerMeta = document.getElementById('viewerMeta');
+const viewerNote = document.getElementById('viewerNote');
 
 let items = [];
 let notes = {};
@@ -52,8 +56,23 @@ function renderListReadOnly(listEl, itemsToShow) {
     content.appendChild(meta);
     if (it.note) content.appendChild(note);
     el.appendChild(content);
+    el.style.cursor = 'pointer';
+    el.addEventListener('click', () => openViewer(it));
     listEl.appendChild(el);
   });
+}
+
+function openViewer(item) {
+  if (!viewerModal) return;
+  viewerTitle.textContent = item.title;
+  viewerMeta.textContent = `${item.month} · Uge ${item.week} · ${item.cat}`;
+  viewerNote.textContent = item.note || '';
+  viewerModal.classList.add('open');
+}
+
+function closeViewer() {
+  if (!viewerModal) return;
+  viewerModal.classList.remove('open');
 }
 
 function render(focusedMonth = null) {
@@ -99,6 +118,13 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btnPrintCustomer').addEventListener('click', () => {
     window.print();
   });
+  const vc = document.getElementById('viewerClose');
+  if (vc) vc.addEventListener('click', closeViewer);
+  if (viewerModal) {
+    viewerModal.addEventListener('click', (e) => {
+      if (e.target === viewerModal) closeViewer();
+    });
+  }
 
   render(null);
   if (params.get('print') === '1') {
