@@ -30,6 +30,9 @@
       <label for="category">Kategori
         <select id="category"></select>
       </label>
+      <label for="files">Vedhæft filer (vises i kundevisning)
+        <input id="files" type="file" multiple />
+      </label>
       <label for="notes">Noter
         <textarea id="notes" class="notes" placeholder="Detaljer, links, osv."></textarea>
       </label>
@@ -53,6 +56,7 @@
           <span class="label">Skjul</span>
         </button>
       </h3>
+      <div class="chips" id="listFilters"></div>
       <div id="activitiesBody" class="collapse-wrap">
         <div id="list" class="list"></div>
       </div>

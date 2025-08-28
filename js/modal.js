@@ -13,7 +13,7 @@ import { sortItems } from './store.js';
  * @param {Object} callbacks
  *   - onSaveNotes(monthName, text)
  */
-export function openModal(monthName, items, notes, callbacks) {
+export function openModal(monthName, items, notes, callbacks, opts = {}) {
   const modal = document.getElementById('monthModal');
   const titleEl = document.getElementById('modalTitle');
   const actsEl = document.getElementById('modalActs');
@@ -21,7 +21,10 @@ export function openModal(monthName, items, notes, callbacks) {
   titleEl.textContent = monthName;
   // udfyld liste
   actsEl.innerHTML = '';
-  const monthItems = sortItems(items).filter(x => x.month === monthName);
+  let monthItems = sortItems(items).filter(x => x.month === monthName);
+  if (opts && typeof opts.week === 'number') {
+    monthItems = monthItems.filter(x => x.week === opts.week);
+  }
   if (monthItems.length === 0) {
     const empty = document.createElement('div');
     empty.className = 'item glass';

@@ -184,8 +184,12 @@ export function drawWheel(svg, items, callbacks) {
       g.appendChild(tt);
       g.style.cursor = 'pointer';
       g.addEventListener('click', () => {
-        const approxMonth = Math.floor((i * 12) / 52);
-        callbacks.openMonth(MONTHS[approxMonth]);
+        const approxMonthIndex = Math.floor((i * 12) / 52);
+        const monthName = MONTHS[approxMonthIndex];
+        const segInMonth = i - Math.round(approxMonthIndex * 52 / 12);
+        const weekNum = Math.max(1, Math.min(5, Math.round((segInMonth * 4) / (52 / 12)) + 1));
+        if (callbacks.openWeek) callbacks.openWeek(monthName, weekNum);
+        else callbacks.openMonth(monthName);
       });
       svg.appendChild(g);
     }

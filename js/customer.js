@@ -73,7 +73,16 @@ function openViewer(item) {
   if (!viewerModal) return;
   viewerTitle.textContent = item.title;
   viewerMeta.textContent = `${item.month} · Uge ${item.week} · ${item.cat}`;
+  const dateStr = item.date ? new Date(item.date).toLocaleDateString('da-DK') : '';
+  viewerMeta.textContent = `${item.month} · ${dateStr} · ${item.cat}`;
   viewerNote.textContent = item.note || '';
+  // attachments
+  if (item.attachments && item.attachments.length) {
+    const list = document.createElement('div');
+    list.style.marginTop = '8px';
+    list.innerHTML = item.attachments.map(a => `<a href="#" download="${a.name}" style="margin-right:10px;">${a.name}</a>`).join('');
+    viewerNote.appendChild(list);
+  }
   viewerModal.classList.add('open');
 }
 

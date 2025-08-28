@@ -34,6 +34,7 @@ const dateInput = document.getElementById('date');
 const titleInput = document.getElementById('title');
 const categorySelect = document.getElementById('category');
 const notesInput = document.getElementById('notes');
+const filesInput = document.getElementById('files');
 const chipsContainer = document.getElementById('chips');
 const listContainer = document.getElementById('list');
 const wheelSvg = document.getElementById('wheel');
@@ -86,6 +87,26 @@ function initFilterChips() {
   });
   updateFilterActive();
 }
+// Listefiltre i aktivitetssektionen
+function initListFilters() {
+  const wrap = document.getElementById('listFilters');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  const cats = ['Alle', ...CATS];
+  cats.forEach(cat => {
+    const chip = document.createElement('span');
+    chip.className = 'chip';
+    chip.textContent = cat;
+    chip.addEventListener('click', () => {
+      activeCategory = cat;
+      settings.activeCategory = activeCategory;
+      writeSettings(settings);
+      updateFilterActive();
+      render();
+    });
+    wrap.appendChild(chip);
+  });
+}
 
 function updateFilterActive() {
   const wrap = document.getElementById('filterChips');
@@ -114,6 +135,12 @@ function saveItem() {
   const cat = categorySelect.value;
   const note = notesInput.value.trim();
   const savedDateIso = baseDate.toISOString();
+  // attachments: read files as base64 array (name + data)
+  let attachments = [];
+  if (filesInput && filesInput.files && filesInput.files.length > 0) {
+    const fileList = Array.from(filesInput.files);
+    attachments = fileList.map(f => ({ name: f.name }));
+  }
   if (!title) {
     alert('Skriv en aktivitetstitel');
     return;
@@ -121,12 +148,12 @@ function saveItem() {
   if (editingId) {
     const idx = items.findIndex(x => x.id === editingId);
     if (idx > -1) {
-      items[idx] = { ...items[idx], month, week, title, cat, note, date: savedDateIso };
+      items[idx] = { ...items[idx], month, week, title, cat, note, date: savedDateIso, attachments };
     }
     editingId = null;
   } else {
     const id = generateId();
-    items.push({ id, month, week, title, cat, note, date: savedDateIso });
+    items.push({ id, month, week, title, cat, note, date: savedDateIso, attachments });
   }
   writeItems(items);
   resetForm();
@@ -322,6 +349,11 @@ function render() {
       openModal(monthName, items, notes, { onSaveNotes: handleSaveNotes });
       render();
     },
+    openWeek: (monthName, week) => {
+      focusedMonth = monthName;
+      openModal(monthName, items, notes, { onSaveNotes: handleSaveNotes }, { week });
+      render();
+    },
     moveItemToMonth: (id, monthName) => {
       const idx = items.findIndex(x => x.id === id);
       if (idx > -1) {
@@ -372,6 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initSelects();
   initChips();
   initFilterChips();
+  initListFilters();
   setupShareModal();
   setupZoomControls();
   setupWheelScrollZoom();
