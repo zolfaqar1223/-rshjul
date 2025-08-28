@@ -3,12 +3,7 @@ import { MONTHS, readItems, readNotes, CAT_COLORS } from './store.js';
 import { drawWheel } from './wheel.js';
 
 const wheelSvg = document.getElementById('wheel');
-const wheelWrap = document.getElementById('wheelWrap');
-const timelineWrap = document.getElementById('timelineWrap');
-const timelineEl = document.getElementById('timeline');
-const timelineMonths = document.getElementById('timelineMonths');
-const tabWheel = document.getElementById('tabWheel');
-const tabTimeline = document.getElementById('tabTimeline');
+// timeline UI removed
 const listContainer = document.getElementById('list');
 const monthNotesList = document.getElementById('monthNotesList');
 const seeAllBtn = document.getElementById('seeAllCustomer');
@@ -24,35 +19,7 @@ let currentIndex = -1;
 
 let items = [];
 let notes = {};
-function renderTimeline(allItems) {
-  if (!timelineMonths) return;
-  timelineMonths.innerHTML = '';
-  const byMonth = {};
-  allItems.forEach(it => { (byMonth[it.month] = byMonth[it.month] || []).push(it); });
-  const months = MONTHS;
-  months.forEach(m => {
-    const col = document.createElement('div');
-    col.className = 'month-col';
-    const label = document.createElement('div');
-    label.className = 'month-label';
-    label.textContent = m;
-    const track = document.createElement('div');
-    track.className = 'track';
-    (byMonth[m] || []).sort((a,b) => a.week - b.week).forEach(it => {
-      const mark = document.createElement('div');
-      mark.className = 'marker';
-      const title = document.createElement('span');
-      title.className = 'marker-title';
-      title.textContent = it.title;
-      mark.appendChild(title);
-      mark.addEventListener('click', () => openViewerById(it));
-      track.appendChild(mark);
-    });
-    col.appendChild(label);
-    col.appendChild(track);
-    timelineMonths.appendChild(col);
-  });
-}
+// no timeline renderer
 
 function renderListReadOnly(listEl, itemsToShow) {
   listEl.innerHTML = '';
@@ -225,23 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const seeAll = () => render(null);
   if (seeAllBtn) seeAllBtn.addEventListener('click', seeAll);
 
-  // Tabs between wheel and timeline
-  function activate(view) {
-    if (view === 'wheel') {
-      wheelWrap.style.display = '';
-      timelineWrap.style.display = 'none';
-      tabWheel.classList.add('active');
-      tabTimeline.classList.remove('active');
-    } else {
-      wheelWrap.style.display = 'none';
-      timelineWrap.style.display = '';
-      tabTimeline.classList.add('active');
-      tabWheel.classList.remove('active');
-      renderTimeline(items);
-    }
-  }
-  if (tabWheel) tabWheel.addEventListener('click', () => activate('wheel'));
-  if (tabTimeline) tabTimeline.addEventListener('click', () => activate('timeline'));
+  // timeline UI removed
   if (viewerModal) {
     viewerModal.addEventListener('click', (e) => {
       if (e.target === viewerModal) closeViewer();

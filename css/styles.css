@@ -538,37 +538,4 @@ body.customer #listSection { grid-area: acts; }
   }
 }
 
-/* Timeline (horizontal) */
-.timeline,
-.timeline-h {
-  border: 1px solid var(--muted);
-  border-radius: 10px;
-  padding: 10px;
-  background: #0f2f2a;
-  max-height: 700px;
-  overflow: auto;
-}
-.timeline-h {
-  overflow-x: auto;
-}
-.timeline-h .months {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(120px, 1fr));
-  gap: 14px;
-}
-.timeline-h .month-col { position: relative; padding-top: 36px; }
-.timeline-h .month-label {
-  position: sticky;
-  top: 10px;
-  background: #0b2523;
-  border: 1px solid var(--muted);
-  color: var(--text);
-  padding: 6px 12px;
-  border-radius: 12px;
-  text-align: center;
-  font-weight: 700;
-}
-.timeline-h .track { position: relative; padding: 12px 6px; }
-.timeline-h .marker { position: relative; display: flex; align-items: center; gap: 8px; margin: 14px 0; cursor: pointer; }
-.timeline-h .marker::before { content: ""; width: 6px; height: 6px; border-radius: 999px; background: var(--accent); display: inline-block; }
-.timeline-h .marker-title { font-size: 12px; }
+/* Timeline styles removed */
