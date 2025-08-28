@@ -48,3 +48,16 @@ export function segPath(cx, cy, rIn, rOut, a1, a2) {
   const [ix, iy] = polar(cx, cy, rIn, a2);
   return `M ${sx} ${sy} ${arc(cx, cy, rOut, a1, a2)} L ${ix} ${iy} ${arc(cx, cy, rIn, a2, a1)} Z`;
 }
+
+/**
+ * Calculate ISO week number for a given Date.
+ * @param {Date} date
+ * @returns {number} 1-53
+ */
+export function getIsoWeek(date) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  return Math.ceil(((d - yearStart) / 86400000 + 1)/7);
+}

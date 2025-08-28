@@ -50,10 +50,21 @@
     </section>
     <!-- Årshjul -->
     <section class="card glass wheel-wrap">
+      <div class="chips" id="filterChips"></div>
       <svg id="wheel" viewBox="0 0 700 700" aria-label="Årshjul"></svg>
+      <div class="calendar-block">
+        <div class="tabs" role="tablist">
+          <button id="tabMonth" class="tab active" role="tab" aria-selected="true">Måned</button>
+          <button id="tabWeek" class="tab" role="tab" aria-selected="false">Uge</button>
+        </div>
+        <div id="calendarMonth" class="calendar-view"></div>
+        <div id="calendarWeek" class="calendar-view" style="display:none;"></div>
+      </div>
     </section>
     <!-- Liste -->
     <section class="card glass" id="listSection">
+      <h3>Kommende (6 uger)</h3>
+      <div id="upcoming" class="list"></div>
       <h3>Aktiviteter</h3>
       <div id="list" class="list"></div>
     </section>
@@ -101,5 +112,6 @@
   </template>
   <!-- JavaScript modules -->
   <script type="module" src="js/main.js"></script>
+  <div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 </body>
 </html>

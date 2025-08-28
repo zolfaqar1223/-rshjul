@@ -9,11 +9,16 @@ import {
   writeItems,
   readNotes,
   writeNotes,
+  readSettings,
+  writeSettings,
   generateId
 } from './store.js';
 import { renderList } from './list.js';
 import { drawWheel } from './wheel.js';
 import { openModal } from './modal.js';
+import { renderMonthCalendar, renderWeekAgenda } from './calendar.js';
+import { renderUpcoming } from './upcoming.js';
+import { showToast } from './toast.js';
 
 // Applikationens mutable tilstand
 let items = [];
@@ -24,6 +29,7 @@ let editingId = null;
 let focusedMonth = null;
 let activeCategory = 'Alle';
 let zoomLevel = 1;
+let settings = {};
 
 // DOM‑cache
 const monthSelect = document.getElementById('month');
@@ -34,6 +40,9 @@ const notesInput = document.getElementById('notes');
 const chipsContainer = document.getElementById('chips');
 const listContainer = document.getElementById('list');
 const wheelSvg = document.getElementById('wheel');
+const upcomingEl = document.getElementById('upcoming');
+const calMonthEl = document.getElementById('calendarMonth');
+const calWeekEl = document.getElementById('calendarWeek');
 
 // ====== UI initialisering ======
 function initSelects() {
@@ -79,6 +88,8 @@ function initFilterChips() {
     chip.textContent = cat;
     chip.addEventListener('click', () => {
       activeCategory = cat;
+      settings.activeCategory = activeCategory;
+      writeSettings(settings);
       updateFilterActive();
       render();
     });
@@ -128,12 +139,14 @@ function saveItem() {
   writeItems(items);
   resetForm();
   render();
+  showToast('Aktivitet gemt', 'success');
 }
 
 function deleteItem(id) {
   items = items.filter(x => x.id !== id);
   writeItems(items);
   render();
+  showToast('Aktivitet slettet', 'success');
 }
 
 function importJson(file) {
@@ -162,6 +175,7 @@ function exportJson() {
   a.download = 'årshjul.json';
   a.click();
   URL.revokeObjectURL(a.href);
+  showToast('Eksporterede til JSON', 'success');
 }
 
 function handleSaveNotes(monthName, text) {
@@ -223,6 +237,22 @@ function setupZoomControls() {
 function applyZoom() {
   wheelSvg.style.transformOrigin = '50% 50%';
   wheelSvg.style.transform = `scale(${zoomLevel})`;
+  settings.zoomLevel = zoomLevel;
+  writeSettings(settings);
+}
+
+// Ctrl+Scroll zoom
+function setupWheelScrollZoom() {
+  const container = document.querySelector('.wheel-wrap');
+  if (!container) return;
+  container.addEventListener('wheel', e => {
+    if (e.ctrlKey) {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -0.1 : 0.1;
+      zoomLevel = Math.max(0.6, Math.min(1.8, Math.round((zoomLevel + delta) * 10) / 10));
+      applyZoom();
+    }
+  }, { passive: false });
 }
 
 // ====== Render-funktion ======
@@ -280,6 +310,79 @@ function render() {
   }, { focusedMonth });
 
   applyZoom();
+
+  // Upcoming
+  if (upcomingEl) {
+    renderUpcoming(upcomingEl, filtered, {
+      openMonth: monthName => {
+        focusedMonth = monthName;
+        openModal(monthName, items, notes, { onSaveNotes: handleSaveNotes });
+        render();
+      }
+    });
+  }
+
+  // Calendar tabs
+  const tabMonth = document.getElementById('tabMonth');
+  const tabWeek = document.getElementById('tabWeek');
+  if (tabMonth && tabWeek && calMonthEl && calWeekEl) {
+    // active tab styling
+    const setTab = which => {
+      if (which === 'month') {
+        tabMonth.classList.add('active');
+        tabWeek.classList.remove('active');
+        calMonthEl.style.display = '';
+        calWeekEl.style.display = 'none';
+      } else {
+        tabWeek.classList.add('active');
+        tabMonth.classList.remove('active');
+        calWeekEl.style.display = '';
+        calMonthEl.style.display = 'none';
+      }
+    };
+    if (!tabMonth.onclick) tabMonth.onclick = () => setTab('month');
+    if (!tabWeek.onclick) tabWeek.onclick = () => setTab('week');
+    // Render month calendar for focused or first month
+    const monthName = focusedMonth || MONTHS[0];
+    renderMonthCalendar(calMonthEl, filtered, {
+      monthName,
+      onOpen: m => { focusedMonth = m; render(); },
+      onEdit: item => {
+        editingId = item.id;
+        monthSelect.value = item.month;
+        weekInput.value = item.week;
+        titleInput.value = item.title;
+        categorySelect.value = item.cat;
+        notesInput.value = item.note || '';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
+      onCreate: (m, w) => {
+        monthSelect.value = m;
+        weekInput.value = String(w);
+        titleInput.focus();
+      }
+    });
+    // Render week agenda for focused month and selected week
+    const weekNum = Number(weekInput.value || '1');
+    renderWeekAgenda(calWeekEl, filtered, {
+      monthName,
+      week: Math.max(1, Math.min(5, weekNum)),
+      onEdit: item => {
+        editingId = item.id;
+        monthSelect.value = item.month;
+        weekInput.value = item.week;
+        titleInput.value = item.title;
+        categorySelect.value = item.cat;
+        notesInput.value = item.note || '';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
+      onCreate: (m, w) => {
+        monthSelect.value = m;
+        weekInput.value = String(w);
+        titleInput.focus();
+      }
+    });
+  }
 }
 
 // ====== Initialiser hele appen ======
@@ -287,12 +390,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // hent data
   items = readItems();
   notes = readNotes();
+  settings = readSettings();
+  if (settings.activeCategory) activeCategory = settings.activeCategory;
+  if (settings.zoomLevel) zoomLevel = settings.zoomLevel;
   // setup UI
   initSelects();
   initChips();
   initFilterChips();
   setupShareModal();
   setupZoomControls();
+  setupWheelScrollZoom();
   // knapper
   document.getElementById('btnSave').addEventListener('click', saveItem);
   document.getElementById('btnReset').addEventListener('click', resetForm);

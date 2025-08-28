@@ -20,6 +20,7 @@ export const CATS = [
 
 const ITEMS_KEY = 'årshjul.admin.items';
 const NOTES_KEY = 'årshjul.admin.notes';
+const SETTINGS_KEY = 'årshjul.admin.settings';
 // Legacy keys kept for backward-compatible reads
 const ITEMS_KEY_OLD = 'aarshjul.admin.items';
 const NOTES_KEY_OLD = 'aarshjul.admin.notes';
@@ -81,6 +82,27 @@ export function writeNotes(notes) {
     try { localStorage.removeItem(NOTES_KEY_OLD); } catch {}
   } catch (err) {
     console.error('Kunne ikke skrive noter til localStorage', err);
+  }
+}
+
+/**
+ * Læs/Gem settings (fx aktive filtre, zoom) i localStorage
+ */
+export function readSettings() {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch (err) {
+    console.error('Kunne ikke læse settings', err);
+    return {};
+  }
+}
+
+export function writeSettings(settings) {
+  try {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  } catch (err) {
+    console.error('Kunne ikke skrive settings', err);
   }
 }
 
