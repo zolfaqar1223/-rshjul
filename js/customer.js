@@ -6,6 +6,7 @@ const wheelSvg = document.getElementById('wheel');
 const wheelWrap = document.getElementById('wheelWrap');
 const timelineWrap = document.getElementById('timelineWrap');
 const timelineEl = document.getElementById('timeline');
+const timelineMonths = document.getElementById('timelineMonths');
 const tabWheel = document.getElementById('tabWheel');
 const tabTimeline = document.getElementById('tabTimeline');
 const listContainer = document.getElementById('list');
@@ -24,31 +25,32 @@ let currentIndex = -1;
 let items = [];
 let notes = {};
 function renderTimeline(allItems) {
-  if (!timelineEl) return;
-  timelineEl.innerHTML = '';
+  if (!timelineMonths) return;
+  timelineMonths.innerHTML = '';
   const byMonth = {};
-  allItems.forEach(it => {
-    (byMonth[it.month] = byMonth[it.month] || []).push(it);
-  });
-  Object.keys(byMonth).forEach(m => {
-    const row = document.createElement('div');
-    row.className = 'time-row';
+  allItems.forEach(it => { (byMonth[it.month] = byMonth[it.month] || []).push(it); });
+  const months = MONTHS;
+  months.forEach(m => {
+    const col = document.createElement('div');
+    col.className = 'month-col';
     const label = document.createElement('div');
-    label.className = 'time-label';
+    label.className = 'month-label';
     label.textContent = m;
-    const itemsCol = document.createElement('div');
-    itemsCol.className = 'time-items';
-    byMonth[m].sort((a,b) => a.week - b.week).forEach(it => {
-      const d = document.createElement('div');
-      d.className = 'item glass';
-      d.style.cursor = 'pointer';
-      d.innerHTML = `<div class="item-content"><strong>${it.title}</strong><div class="meta">Uge ${it.week} · ${it.cat}</div></div>`;
-      d.addEventListener('click', () => openViewerById(it));
-      itemsCol.appendChild(d);
+    const track = document.createElement('div');
+    track.className = 'track';
+    (byMonth[m] || []).sort((a,b) => a.week - b.week).forEach(it => {
+      const mark = document.createElement('div');
+      mark.className = 'marker';
+      const title = document.createElement('span');
+      title.className = 'marker-title';
+      title.textContent = it.title;
+      mark.appendChild(title);
+      mark.addEventListener('click', () => openViewerById(it));
+      track.appendChild(mark);
     });
-    row.appendChild(label);
-    row.appendChild(itemsCol);
-    timelineEl.appendChild(row);
+    col.appendChild(label);
+    col.appendChild(track);
+    timelineMonths.appendChild(col);
   });
 }
 

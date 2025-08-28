@@ -449,7 +449,7 @@ svg {
 
 body.customer .wrap {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
+  grid-template-columns: 1.6fr 0.8fr;
   grid-template-rows: auto 1fr;
   grid-template-areas:
     "wheel acts"
@@ -458,6 +458,8 @@ body.customer .wrap {
 }
 body.customer .wheel-wrap { grid-area: wheel; }
 body.customer #listSection { grid-area: acts; }
+/* Bigger wheel on customer */
+.customer .wheel-wrap { min-height: 820px; }
 
 /* Read-only item modal for customer */
 .customer .viewer-modal {
@@ -530,8 +532,9 @@ body.customer #listSection { grid-area: acts; }
   }
 }
 
-/* Timeline */
-.timeline {
+/* Timeline (horizontal) */
+.timeline,
+.timeline-h {
   border: 1px solid var(--muted);
   border-radius: 10px;
   padding: 10px;
@@ -539,14 +542,27 @@ body.customer #listSection { grid-area: acts; }
   max-height: 700px;
   overflow: auto;
 }
-.timeline .time-row {
-  display: grid;
-  grid-template-columns: 120px 1fr;
-  gap: 10px;
-  align-items: start;
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+.timeline-h {
+  overflow-x: auto;
 }
-.timeline .time-row:last-child { border-bottom: none; }
-.timeline .time-label { font-size: 12px; opacity: 0.9; }
-.timeline .time-items { display: flex; flex-direction: column; gap: 8px; }
+.timeline-h .months {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(120px, 1fr));
+  gap: 14px;
+}
+.timeline-h .month-col { position: relative; padding-top: 36px; }
+.timeline-h .month-label {
+  position: sticky;
+  top: 10px;
+  background: #0b2523;
+  border: 1px solid var(--muted);
+  color: var(--text);
+  padding: 6px 12px;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: 700;
+}
+.timeline-h .track { position: relative; padding: 12px 6px; }
+.timeline-h .marker { position: relative; display: flex; align-items: center; gap: 8px; margin: 14px 0; cursor: pointer; }
+.timeline-h .marker::before { content: ""; width: 6px; height: 6px; border-radius: 999px; background: var(--accent); display: inline-block; }
+.timeline-h .marker-title { font-size: 12px; }
