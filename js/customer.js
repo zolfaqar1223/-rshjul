@@ -54,14 +54,26 @@ function render(focusedMonth = null) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  items = readItems();
-  notes = readNotes();
+  const params = new URLSearchParams(location.search);
+  const dataParam = params.get('data');
+  if (dataParam) {
+    try {
+      const decoded = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(dataParam)))));
+      if (Array.isArray(decoded.items)) items = decoded.items;
+      if (decoded.notes && typeof decoded.notes === 'object') notes = decoded.notes;
+    } catch (e) {
+      items = readItems();
+      notes = readNotes();
+    }
+  } else {
+    items = readItems();
+    notes = readNotes();
+  }
 
   document.getElementById('btnPrintCustomer').addEventListener('click', () => {
     window.print();
   });
 
-  const params = new URLSearchParams(location.search);
   render(null);
   if (params.get('print') === '1') {
     setTimeout(() => window.print(), 400);

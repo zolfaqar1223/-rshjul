@@ -33,7 +33,7 @@ let settings = {};
 
 // DOM‑cache
 const monthSelect = document.getElementById('month');
-const weekInput = document.getElementById('week');
+const dateInput = document.getElementById('date');
 const titleInput = document.getElementById('title');
 const categorySelect = document.getElementById('category');
 const notesInput = document.getElementById('notes');
@@ -112,13 +112,20 @@ function resetForm() {
   editingId = null;
   titleInput.value = '';
   notesInput.value = '';
-  weekInput.value = '1';
+  if (dateInput) dateInput.value = '';
 }
 
 function saveItem() {
-  const month = monthSelect.value;
-  const weekVal = parseInt(weekInput.value || '1', 10);
-  const week = Math.max(1, Math.min(5, weekVal));
+  let month = monthSelect.value;
+  let week = 1;
+  // Udled måned/uge ud fra valgt dato, hvis udfyldt
+  if (dateInput && dateInput.value) {
+    const d = new Date(dateInput.value);
+    const mIdx = d.getMonth();
+    month = MONTHS[mIdx];
+    const day = d.getDate();
+    week = Math.max(1, Math.min(5, Math.ceil(day / 7)));
+  }
   const title = titleInput.value.trim();
   const cat = categorySelect.value;
   const note = notesInput.value.trim();
@@ -201,11 +208,13 @@ function setupShareModal() {
   btnShare.addEventListener('click', openShareModal);
   btnShareClose.addEventListener('click', closeShareModal);
   btnSharePdf.addEventListener('click', () => {
-    window.open('customer.html?print=1', '_blank');
+    const data = encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify({ items, notes })))));
+    window.open(`customer.html?data=${data}&print=1`, '_blank');
     closeShareModal();
   });
   btnShareLink.addEventListener('click', () => {
-    window.open('customer.html', '_blank');
+    const data = encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify({ items, notes })))));
+    window.open(`customer.html?data=${data}`, '_blank');
     closeShareModal();
   });
 }
@@ -265,10 +274,10 @@ function render() {
     onEdit: item => {
       editingId = item.id;
       monthSelect.value = item.month;
-      weekInput.value = item.week;
       titleInput.value = item.title;
       categorySelect.value = item.cat;
       notesInput.value = item.note || '';
+      if (dateInput) dateInput.value = '';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
     onOpen: monthName => {
@@ -350,7 +359,6 @@ function render() {
       onEdit: item => {
         editingId = item.id;
         monthSelect.value = item.month;
-        weekInput.value = item.week;
         titleInput.value = item.title;
         categorySelect.value = item.cat;
         notesInput.value = item.note || '';
@@ -358,19 +366,18 @@ function render() {
       },
       onCreate: (m, w) => {
         monthSelect.value = m;
-        weekInput.value = String(w);
+        if (dateInput) dateInput.value = '';
         titleInput.focus();
       }
     });
     // Render week agenda for focused month and selected week
-    const weekNum = Number(weekInput.value || '1');
+    const weekNum = 1;
     renderWeekAgenda(calWeekEl, filtered, {
       monthName,
       week: Math.max(1, Math.min(5, weekNum)),
       onEdit: item => {
         editingId = item.id;
         monthSelect.value = item.month;
-        weekInput.value = item.week;
         titleInput.value = item.title;
         categorySelect.value = item.cat;
         notesInput.value = item.note || '';
@@ -378,7 +385,7 @@ function render() {
       },
       onCreate: (m, w) => {
         monthSelect.value = m;
-        weekInput.value = String(w);
+        if (dateInput) dateInput.value = '';
         titleInput.focus();
       }
     });
