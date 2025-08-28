@@ -19,6 +19,7 @@ let currentIndex = -1;
 
 let items = [];
 let notes = {};
+let zoomLevel = 1;
 // no timeline renderer
 
 function renderListReadOnly(listEl, itemsToShow) {
@@ -153,6 +154,9 @@ function render(focusedMonth = null) {
     moveItemToMonthWeek: () => {}
   };
   drawWheel(wheelSvg, items, callbacks, { focusedMonth });
+  // Apply zoom on customer wheel similar to main
+  wheelSvg.style.transformOrigin = '50% 50%';
+  wheelSvg.style.transform = `scale(${zoomLevel})`;
   const listItems = focusedMonth ? items.filter(x => x.month === focusedMonth) : items;
   renderListReadOnly(listContainer, listItems);
   renderMonthNotes(monthNotesList);
@@ -187,6 +191,27 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btnPrintCustomer').addEventListener('click', () => {
     window.print();
   });
+  // Add zoom controls on customer view
+  const wrap = document.querySelector('.wheel-wrap');
+  if (wrap && !wrap.querySelector('.zoom-controls')) {
+    const zc = document.createElement('div');
+    zc.className = 'zoom-controls';
+    const btnMinus = document.createElement('button');
+    btnMinus.textContent = '−';
+    const btnPlus = document.createElement('button');
+    btnPlus.textContent = '+';
+    zc.appendChild(btnMinus);
+    zc.appendChild(btnPlus);
+    wrap.appendChild(zc);
+    btnMinus.addEventListener('click', () => {
+      zoomLevel = Math.max(0.6, Math.round((zoomLevel - 0.1) * 10) / 10);
+      render();
+    });
+    btnPlus.addEventListener('click', () => {
+      zoomLevel = Math.min(1.6, Math.round((zoomLevel + 0.1) * 10) / 10);
+      render();
+    });
+  }
   const vc = document.getElementById('viewerClose');
   if (vc) vc.addEventListener('click', closeViewer);
   const seeAll = () => render(null);
