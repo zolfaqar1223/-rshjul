@@ -15,8 +15,10 @@ import { polar, segPath } from './utils.js';
  *   - openMonth(monthName)
  *   - moveItemToMonth(id, monthName)
  *   - moveItemToMonthWeek(id, monthName, weekNumber)
+ * @param {Object} options
+ *   - focusedMonth?: string
  */
-export function drawWheel(svg, items, callbacks) {
+export function drawWheel(svg, items, callbacks, options = {}) {
   // Ryd tidligere indhold
   svg.innerHTML = '';
   const cx = 350;
@@ -26,6 +28,9 @@ export function drawWheel(svg, items, callbacks) {
   const rQuarterOuter = 160;
   const rMonthOuter = 250;
   const rWeekOuter = 320;
+
+  const { focusedMonth } = options;
+
   // Midtercirkel
   const center = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
   center.setAttribute('cx', cx);
@@ -79,21 +84,23 @@ export function drawWheel(svg, items, callbacks) {
     const a1 = (2 * Math.PI) * (m / 12) - Math.PI / 2;
     const a2 = (2 * Math.PI) * ((m + 1) / 12) - Math.PI / 2;
     const qIndex = Math.floor(m / 3);
+    const monthName = MONTHS[m];
     // baggrundssegment
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     path.setAttribute('d', segPath(cx, cy, rQuarterOuter, rMonthOuter, a1, a2));
     path.setAttribute('fill', `var(--q${qIndex + 1})`);
-    path.setAttribute('opacity', '0.3');
+    path.setAttribute('opacity', focusedMonth && focusedMonth !== monthName ? '0.15' : '0.3');
     path.style.cursor = 'pointer';
-    path.addEventListener('click', () => callbacks.openMonth(MONTHS[m]));
+    path.classList.add('month-seg');
+    path.addEventListener('click', () => callbacks.openMonth(monthName));
     path.addEventListener('dragover', e => e.preventDefault());
     path.addEventListener('drop', e => {
       const id = e.dataTransfer.getData('text/plain');
-      callbacks.moveItemToMonth(id, MONTHS[m]);
+      callbacks.moveItemToMonth(id, monthName);
     });
     svg.appendChild(path);
     // highlight med accent farve hvis der findes aktiviteter i måneden
-    const count = monthCounts[MONTHS[m]] || 0;
+    const count = monthCounts[monthName] || 0;
     if (count > 0) {
       const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       const rIn = rQuarterOuter + 10;
@@ -103,8 +110,21 @@ export function drawWheel(svg, items, callbacks) {
       const op = 0.2 + Math.min(count, 3) * 0.15;
       p.setAttribute('opacity', String(Math.min(op, 0.6)));
       p.style.cursor = 'pointer';
-      p.addEventListener('click', () => callbacks.openMonth(MONTHS[m]));
+      p.classList.add('month-seg');
+      p.addEventListener('click', () => callbacks.openMonth(monthName));
       svg.appendChild(p);
+    }
+    // fokusring
+    if (focusedMonth && focusedMonth === monthName) {
+      const focus = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      const rIn = rQuarterOuter - 4;
+      const rOut = rMonthOuter + 4;
+      focus.setAttribute('d', segPath(cx, cy, rIn, rOut, a1, a2));
+      focus.setAttribute('fill', 'transparent');
+      focus.setAttribute('stroke', 'var(--accent)');
+      focus.setAttribute('stroke-width', '2');
+      focus.setAttribute('opacity', '0.8');
+      svg.appendChild(focus);
     }
     // månedsnavn
     const mid = (a1 + a2) / 2;
@@ -114,9 +134,9 @@ export function drawWheel(svg, items, callbacks) {
     txt.setAttribute('y', ty);
     txt.setAttribute('text-anchor', 'middle');
     txt.setAttribute('font-size', '12');
-    txt.textContent = MONTHS[m];
+    txt.textContent = monthName;
     txt.style.cursor = 'pointer';
-    txt.addEventListener('click', () => callbacks.openMonth(MONTHS[m]));
+    txt.addEventListener('click', () => callbacks.openMonth(monthName));
     svg.appendChild(txt);
   }
   // Beregn ugetællinger (52 segmenter)
@@ -154,6 +174,7 @@ export function drawWheel(svg, items, callbacks) {
       const mid = (a1 + a2) / 2;
       const [bx, by] = polar(cx, cy, (rMonthOuter + rWeekOuter) / 2, mid);
       const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      g.classList.add('marker');
       const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       c.setAttribute('cx', bx);
       c.setAttribute('cy', by);
