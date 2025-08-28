@@ -4,7 +4,6 @@ import { drawWheel } from './wheel.js';
 
 const wheelSvg = document.getElementById('wheel');
 const listContainer = document.getElementById('list');
-const upcomingEl = document.getElementById('upcoming');
 
 let items = [];
 let notes = {};
@@ -57,30 +56,6 @@ function renderListReadOnly(listEl, itemsToShow) {
   });
 }
 
-function renderUpcoming(listEl, itemsToShow) {
-  listEl.innerHTML = '';
-  const byMonthWeek = [...itemsToShow].sort((a,b) => {
-    const ma = MONTHS.indexOf(a.month);
-    const mb = MONTHS.indexOf(b.month);
-    if (ma !== mb) return ma - mb;
-    return a.week - b.week;
-  });
-  const top = byMonthWeek.slice(0, 3);
-  if (top.length === 0) {
-    const empty = document.createElement('div');
-    empty.className = 'upcoming-empty';
-    empty.textContent = 'Ingen planlagte aktiviteter';
-    listEl.appendChild(empty);
-    return;
-  }
-  top.forEach(it => {
-    const d = document.createElement('div');
-    d.className = 'item glass';
-    d.innerHTML = `<div class="item-content"><strong>${it.title}</strong><div class="meta">${it.month} · Uge ${it.week} · ${it.cat}</div>${it.note ? `<div class="note">${it.note}</div>` : ''}</div>`;
-    listEl.appendChild(d);
-  });
-}
-
 function render(focusedMonth = null) {
   const callbacks = {
     openMonth: monthName => {
@@ -93,7 +68,15 @@ function render(focusedMonth = null) {
   drawWheel(wheelSvg, items, callbacks, { focusedMonth });
   const listItems = focusedMonth ? items.filter(x => x.month === focusedMonth) : items;
   renderListReadOnly(listContainer, listItems);
-  if (upcomingEl) renderUpcoming(upcomingEl, items);
+  // Collapsible activities (customer view)
+  const aToggle = document.getElementById('activitiesToggle');
+  const listEl = document.getElementById('list');
+  if (aToggle && listEl && !aToggle.dataset.bound) {
+    aToggle.dataset.bound = '1';
+    aToggle.addEventListener('click', () => {
+      listEl.style.display = listEl.style.display === 'none' ? '' : 'none';
+    });
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

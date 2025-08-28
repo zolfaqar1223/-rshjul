@@ -115,9 +115,10 @@ button.ghost:hover {
 /* Resizable panels */
 .card[contenteditable="false"] { user-select: none; }
 .resizable {
-  resize: horizontal;
+  resize: both;
   overflow: auto;
   min-width: 260px;
+  min-height: 160px;
 }
 
 .card {
