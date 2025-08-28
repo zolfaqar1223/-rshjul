@@ -350,12 +350,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // knapper
   document.getElementById('btnSave').addEventListener('click', saveItem);
   document.getElementById('btnReset').addEventListener('click', resetForm);
-  document.getElementById('btnJson').addEventListener('click', exportJson);
-  document.getElementById('fileJson').addEventListener('change', e => {
-    const f = e.target.files && e.target.files[0];
-    if (f) importJson(f);
-    e.target.value = '';
-  });
   document.getElementById('btnCloseModal').addEventListener('click', () => {
     const modal = document.getElementById('monthModal');
     if (modal) modal.classList.remove('open');
