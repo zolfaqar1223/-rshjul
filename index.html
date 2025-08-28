@@ -14,11 +14,6 @@
     <h1>KMD Årshjul</h1>
     <div class="right">
       <button id="btnPdf">Exportér PDF</button>
-      <button class="ghost" id="btnJson">Export JSON</button>
-      <label class="ghost import-label">
-        Import JSON
-        <input id="fileJson" type="file" accept="application/json" />
-      </label>
       <button id="btnShare">Del med kunde</button>
     </div>
   </header>
@@ -51,14 +46,6 @@
     <section class="card glass wheel-wrap">
       <div class="chips" id="filterChips"></div>
       <svg id="wheel" viewBox="0 0 700 700" aria-label="Årshjul"></svg>
-      <div class="calendar-block">
-        <div class="tabs" role="tablist">
-          <button id="tabMonth" class="tab active" role="tab" aria-selected="true">Måned</button>
-          <button id="tabWeek" class="tab" role="tab" aria-selected="false">Uge</button>
-        </div>
-        <div id="calendarMonth" class="calendar-view"></div>
-        <div id="calendarWeek" class="calendar-view" style="display:none;"></div>
-      </div>
     </section>
     <!-- Liste -->
     <section class="card glass" id="listSection">
@@ -90,6 +77,7 @@
       <div class="modal-actions">
         <button id="btnSharePdf">Åbn kundevisning som PDF</button>
         <button class="ghost" id="btnShareLink">Åbn kundevisning</button>
+        <button class="ghost" id="btnShareCopy">Kopier link</button>
         <button class="ghost" id="btnShareClose">Luk</button>
       </div>
     </div>

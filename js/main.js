@@ -16,8 +16,6 @@ import {
 import { renderList } from './list.js';
 import { drawWheel } from './wheel.js';
 import { openModal } from './modal.js';
-import { renderMonthCalendar, renderWeekAgenda } from './calendar.js';
-import { renderUpcoming } from './upcoming.js';
 import { showToast } from './toast.js';
 
 // Applikationens mutable tilstand
@@ -40,9 +38,6 @@ const notesInput = document.getElementById('notes');
 const chipsContainer = document.getElementById('chips');
 const listContainer = document.getElementById('list');
 const wheelSvg = document.getElementById('wheel');
-const upcomingEl = document.getElementById('upcoming');
-const calMonthEl = document.getElementById('calendarMonth');
-const calWeekEl = document.getElementById('calendarWeek');
 
 // ====== UI initialisering ======
 function initSelects() {
@@ -204,6 +199,7 @@ function setupShareModal() {
   const btnShareClose = document.getElementById('btnShareClose');
   const btnSharePdf = document.getElementById('btnSharePdf');
   const btnShareLink = document.getElementById('btnShareLink');
+  const btnShareCopy = document.getElementById('btnShareCopy');
   if (!btnShare || !btnShareClose || !btnSharePdf || !btnShareLink) return; // Share UI findes ikke her
   btnShare.addEventListener('click', openShareModal);
   btnShareClose.addEventListener('click', closeShareModal);
@@ -217,6 +213,19 @@ function setupShareModal() {
     window.open(`customer.html?data=${data}`, '_blank');
     closeShareModal();
   });
+  if (btnShareCopy) {
+    btnShareCopy.addEventListener('click', async () => {
+      const data = encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify({ items, notes })))));
+      const url = new URL(location.origin + location.pathname.replace('index.html','') + 'customer.html');
+      url.searchParams.set('data', data);
+      try {
+        await navigator.clipboard.writeText(url.toString());
+        showToast('Link kopieret', 'success');
+      } catch (e) {
+        showToast('Kunne ikke kopiere link', 'error');
+      }
+    });
+  }
 }
 
 // ====== Zoom controls ======
@@ -320,76 +329,7 @@ function render() {
 
   applyZoom();
 
-  // Upcoming
-  if (upcomingEl) {
-    renderUpcoming(upcomingEl, filtered, {
-      openMonth: monthName => {
-        focusedMonth = monthName;
-        openModal(monthName, items, notes, { onSaveNotes: handleSaveNotes });
-        render();
-      }
-    });
-  }
-
-  // Calendar tabs
-  const tabMonth = document.getElementById('tabMonth');
-  const tabWeek = document.getElementById('tabWeek');
-  if (tabMonth && tabWeek && calMonthEl && calWeekEl) {
-    // active tab styling
-    const setTab = which => {
-      if (which === 'month') {
-        tabMonth.classList.add('active');
-        tabWeek.classList.remove('active');
-        calMonthEl.style.display = '';
-        calWeekEl.style.display = 'none';
-      } else {
-        tabWeek.classList.add('active');
-        tabMonth.classList.remove('active');
-        calWeekEl.style.display = '';
-        calMonthEl.style.display = 'none';
-      }
-    };
-    if (!tabMonth.onclick) tabMonth.onclick = () => setTab('month');
-    if (!tabWeek.onclick) tabWeek.onclick = () => setTab('week');
-    // Render month calendar for focused or first month
-    const monthName = focusedMonth || MONTHS[0];
-    renderMonthCalendar(calMonthEl, filtered, {
-      monthName,
-      onOpen: m => { focusedMonth = m; render(); },
-      onEdit: item => {
-        editingId = item.id;
-        monthSelect.value = item.month;
-        titleInput.value = item.title;
-        categorySelect.value = item.cat;
-        notesInput.value = item.note || '';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      },
-      onCreate: (m, w) => {
-        monthSelect.value = m;
-        if (dateInput) dateInput.value = '';
-        titleInput.focus();
-      }
-    });
-    // Render week agenda for focused month and selected week
-    const weekNum = 1;
-    renderWeekAgenda(calWeekEl, filtered, {
-      monthName,
-      week: Math.max(1, Math.min(5, weekNum)),
-      onEdit: item => {
-        editingId = item.id;
-        monthSelect.value = item.month;
-        titleInput.value = item.title;
-        categorySelect.value = item.cat;
-        notesInput.value = item.note || '';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      },
-      onCreate: (m, w) => {
-        monthSelect.value = m;
-        if (dateInput) dateInput.value = '';
-        titleInput.focus();
-      }
-    });
-  }
+  // Calendar/upcoming removed
 }
 
 // ====== Initialiser hele appen ======

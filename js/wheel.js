@@ -43,6 +43,7 @@ export function drawWheel(svg, items, callbacks) {
   t1.setAttribute('text-anchor', 'middle');
   t1.setAttribute('font-size', '16');
   t1.setAttribute('font-weight', '600');
+  t1.setAttribute('fill', '#ffffff');
   t1.textContent = 'Årshjul';
   svg.appendChild(t1);
   const t2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
@@ -50,6 +51,7 @@ export function drawWheel(svg, items, callbacks) {
   t2.setAttribute('y', cy + 14);
   t2.setAttribute('text-anchor', 'middle');
   t2.setAttribute('font-size', '11');
+  t2.setAttribute('fill', '#ffffff');
   t2.textContent = String(new Date().getFullYear());
   svg.appendChild(t2);
   // Kvartalernes baggrunde og labels
@@ -68,6 +70,7 @@ export function drawWheel(svg, items, callbacks) {
     txt.setAttribute('y', ly);
     txt.setAttribute('text-anchor', 'middle');
     txt.setAttribute('font-size', '12');
+    txt.setAttribute('fill', '#ffffff');
     txt.textContent = ['Q1', 'Q2', 'Q3', 'Q4'][q];
     svg.appendChild(txt);
   }
@@ -118,6 +121,7 @@ export function drawWheel(svg, items, callbacks) {
     txt.setAttribute('y', ty);
     txt.setAttribute('text-anchor', 'middle');
     txt.setAttribute('font-size', '12');
+    txt.setAttribute('fill', '#ffffff');
     txt.textContent = MONTHS[m];
     txt.style.cursor = 'pointer';
     txt.addEventListener('click', () => callbacks.openMonth(MONTHS[m]));
@@ -171,7 +175,7 @@ export function drawWheel(svg, items, callbacks) {
       tt.setAttribute('text-anchor', 'middle');
       tt.setAttribute('font-size', '12');
       tt.setAttribute('font-weight', '700');
-      tt.setAttribute('fill', 'var(--bg)');
+      tt.setAttribute('fill', '#ffffff');
       tt.textContent = String(count);
       g.appendChild(tt);
       g.style.cursor = 'pointer';
