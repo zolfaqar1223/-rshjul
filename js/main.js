@@ -20,6 +20,11 @@ let items = [];
 let notes = {};
 let editingId = null;
 
+// View state
+let focusedMonth = null;
+let activeCategory = 'Alle';
+let zoomLevel = 1;
+
 // DOM‑cache
 const monthSelect = document.getElementById('month');
 const weekInput = document.getElementById('week');
@@ -59,6 +64,34 @@ function initChips() {
       titleInput.focus();
     });
     chipsContainer.appendChild(chip);
+  });
+}
+
+// Filter chips for kategori
+function initFilterChips() {
+  const wrap = document.getElementById('filterChips');
+  wrap.innerHTML = '';
+  const cats = ['Alle', ...CATS];
+  cats.forEach(cat => {
+    const chip = document.createElement('span');
+    chip.className = 'chip glow';
+    chip.textContent = cat;
+    chip.addEventListener('click', () => {
+      activeCategory = cat;
+      updateFilterActive();
+      render();
+    });
+    wrap.appendChild(chip);
+  });
+  updateFilterActive();
+}
+
+function updateFilterActive() {
+  const wrap = document.getElementById('filterChips');
+  const chips = [...wrap.querySelectorAll('.chip.glow')];
+  chips.forEach(c => {
+    if (c.textContent === activeCategory) c.classList.add('active');
+    else c.classList.remove('active');
   });
 }
 
@@ -134,10 +167,64 @@ function handleSaveNotes(monthName, text) {
   writeNotes(notes);
 }
 
+// ====== Del kunde-version modal ======
+function openShareModal() {
+  const m = document.getElementById('shareModal');
+  m.style.display = 'flex';
+}
+function closeShareModal() {
+  const m = document.getElementById('shareModal');
+  m.style.display = 'none';
+}
+function setupShareModal() {
+  document.getElementById('btnShare').addEventListener('click', openShareModal);
+  document.getElementById('btnShareClose').addEventListener('click', closeShareModal);
+  document.getElementById('btnSharePdf').addEventListener('click', () => {
+    window.open('customer.html?print=1', '_blank');
+    closeShareModal();
+  });
+  document.getElementById('btnShareLink').addEventListener('click', () => {
+    window.open('customer.html', '_blank');
+    closeShareModal();
+  });
+}
+
+// ====== Zoom controls ======
+function setupZoomControls() {
+  const wrap = document.querySelector('.wheel-wrap');
+  let zc = wrap.querySelector('.zoom-controls');
+  if (!zc) {
+    zc = document.createElement('div');
+    zc.className = 'zoom-controls';
+    const btnMinus = document.createElement('button');
+    btnMinus.textContent = '−';
+    const btnPlus = document.createElement('button');
+    btnPlus.textContent = '+';
+    zc.appendChild(btnMinus);
+    zc.appendChild(btnPlus);
+    wrap.appendChild(zc);
+    btnMinus.addEventListener('click', () => {
+      zoomLevel = Math.max(0.6, Math.round((zoomLevel - 0.1) * 10) / 10);
+      applyZoom();
+    });
+    btnPlus.addEventListener('click', () => {
+      zoomLevel = Math.min(1.8, Math.round((zoomLevel + 0.1) * 10) / 10);
+      applyZoom();
+    });
+  }
+}
+function applyZoom() {
+  wheelSvg.style.transformOrigin = '50% 50%';
+  wheelSvg.style.transform = `scale(${zoomLevel})`;
+}
+
 // ====== Render-funktion ======
 function render() {
+  // Filter
+  const filtered = activeCategory === 'Alle' ? items : items.filter(x => x.cat === activeCategory);
+
   // Listen
-  renderList(listContainer, items, {
+  renderList(listContainer, filtered, {
     onEdit: item => {
       editingId = item.id;
       monthSelect.value = item.month;
@@ -148,16 +235,22 @@ function render() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
     onOpen: monthName => {
+      focusedMonth = monthName;
       openModal(monthName, items, notes, { onSaveNotes: handleSaveNotes });
+      // Fokus bevares i wheel via options
+      render();
     },
     onDelete: id => {
       deleteItem(id);
     }
   });
+
   // Hjulet
-  drawWheel(wheelSvg, items, {
+  drawWheel(wheelSvg, filtered, {
     openMonth: monthName => {
+      focusedMonth = monthName;
       openModal(monthName, items, notes, { onSaveNotes: handleSaveNotes });
+      render();
     },
     moveItemToMonth: (id, monthName) => {
       const idx = items.findIndex(x => x.id === id);
@@ -177,7 +270,9 @@ function render() {
         render();
       }
     }
-  });
+  }, { focusedMonth });
+
+  applyZoom();
 }
 
 // ====== Initialiser hele appen ======
@@ -188,10 +283,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // setup UI
   initSelects();
   initChips();
+  initFilterChips();
+  setupShareModal();
+  setupZoomControls();
   // knapper
   document.getElementById('btnSave').addEventListener('click', saveItem);
   document.getElementById('btnReset').addEventListener('click', resetForm);
-  document.getElementById('btnPdf').addEventListener('click', () => window.print());
   document.getElementById('btnJson').addEventListener('click', exportJson);
   document.getElementById('fileJson').addEventListener('change', e => {
     const f = e.target.files && e.target.files[0];
