@@ -262,6 +262,32 @@ function setupWheelScrollZoom() {
   }, { passive: false });
 }
 
+// Animated collapse helper
+function setActivitiesExpanded(expanded) {
+  const wrap = document.getElementById('activitiesBody');
+  const btn = document.getElementById('activitiesToggle');
+  if (!wrap || !btn) return;
+  btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+  const label = btn.querySelector('.label');
+  if (label) label.textContent = expanded ? 'Skjul' : 'Vis';
+  // Measure content height for smooth animation
+  if (expanded) {
+    wrap.style.display = '';
+    const h = wrap.scrollHeight;
+    wrap.style.maxHeight = h + 'px';
+    setTimeout(() => { wrap.style.maxHeight = ''; }, 230);
+  } else {
+    const h = wrap.scrollHeight;
+    wrap.style.maxHeight = h + 'px';
+    // force reflow
+    void wrap.offsetHeight;
+    wrap.style.maxHeight = '0px';
+    setTimeout(() => { wrap.style.display = 'none'; }, 230);
+  }
+  settings.activitiesExpanded = expanded;
+  writeSettings(settings);
+}
+
 // ====== Render-funktion ======
 function render() {
   // Filter
@@ -317,14 +343,18 @@ function render() {
 
   applyZoom();
 
-  // Collapsible activities
+  // Collapsible activities with animation
   const aToggle = document.getElementById('activitiesToggle');
-  const listEl = document.getElementById('list');
-  if (aToggle && listEl && !aToggle.dataset.bound) {
+  const body = document.getElementById('activitiesBody');
+  if (aToggle && body && !aToggle.dataset.bound) {
     aToggle.dataset.bound = '1';
     aToggle.addEventListener('click', () => {
-      listEl.style.display = listEl.style.display === 'none' ? '' : 'none';
+      const expanded = aToggle.getAttribute('aria-expanded') !== 'false';
+      setActivitiesExpanded(!expanded);
     });
+    // initial state
+    const expandedInit = settings.activitiesExpanded !== false;
+    setActivitiesExpanded(expandedInit);
   }
 }
 
@@ -336,6 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
   settings = readSettings();
   if (settings.activeCategory) activeCategory = settings.activeCategory;
   if (settings.zoomLevel) zoomLevel = settings.zoomLevel;
+  if (typeof settings.activitiesExpanded === 'undefined') settings.activitiesExpanded = true;
   // setup UI
   initSelects();
   initChips();

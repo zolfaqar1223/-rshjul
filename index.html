@@ -46,11 +46,16 @@
     </section>
     <!-- Liste -->
     <section class="card glass resizable" id="listSection">
-      <h3 style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+      <h3 class="activities-header" style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
         <span>Aktiviteter</span>
-        <button class="ghost" id="activitiesToggle" style="padding:4px 10px;">Skjul/vis</button>
+        <button class="ghost toggle-btn" id="activitiesToggle" aria-expanded="true" style="padding:4px 10px;display:inline-flex;align-items:center;gap:6px;">
+          <span class="chev" aria-hidden="true" style="display:inline-block;transform:rotate(0deg);transition:transform .2s ease;">▾</span>
+          <span class="label">Skjul</span>
+        </button>
       </h3>
-      <div id="list" class="list"></div>
+      <div id="activitiesBody" class="collapse-wrap">
+        <div id="list" class="list"></div>
+      </div>
     </section>
   </main>
   <!-- Månedsmodal -->
