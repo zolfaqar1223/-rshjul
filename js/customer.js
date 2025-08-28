@@ -1,5 +1,5 @@
 // Kundevisning: read-only rendering af hjul og liste
-import { MONTHS, readItems, readNotes } from './store.js';
+import { MONTHS, readItems, readNotes, CAT_COLORS } from './store.js';
 import { drawWheel } from './wheel.js';
 
 const wheelSvg = document.getElementById('wheel');
@@ -52,8 +52,10 @@ function renderListReadOnly(listEl, itemsToShow) {
     title.textContent = it.title;
     const meta = document.createElement('div');
     meta.className = 'meta';
-    const badge = `<span class="chip" style="background:#0f2f2a;border-color:var(--muted);margin-right:6px;">${it.cat}</span>`;
-    meta.innerHTML = `${badge}${it.month} · Uge ${it.week}`;
+    const color = CAT_COLORS[it.cat] || 'var(--accent)';
+    const badge = `<span class=\"chip\" style=\"background:${color};border-color:${color};margin-right:10px;\">${it.cat}</span>`;
+    const dateStr = it.date ? new Date(it.date).toLocaleDateString('da-DK') : new Date().toLocaleDateString('da-DK');
+    meta.innerHTML = `${badge}${it.month} · ${dateStr}`;
     const note = document.createElement('div');
     note.className = 'note';
     note.textContent = it.note || '';

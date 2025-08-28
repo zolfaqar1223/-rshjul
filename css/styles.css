@@ -358,6 +358,7 @@ svg {
   opacity: 0.8;
   margin-top: 1px;
 }
+.item .meta { display: flex; align-items: center; gap: 10px; }
 
 .actions {
   display: flex;

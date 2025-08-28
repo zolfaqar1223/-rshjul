@@ -113,6 +113,7 @@ function saveItem() {
   const title = titleInput.value.trim();
   const cat = categorySelect.value;
   const note = notesInput.value.trim();
+  const savedDateIso = baseDate.toISOString();
   if (!title) {
     alert('Skriv en aktivitetstitel');
     return;
@@ -120,12 +121,12 @@ function saveItem() {
   if (editingId) {
     const idx = items.findIndex(x => x.id === editingId);
     if (idx > -1) {
-      items[idx] = { ...items[idx], month, week, title, cat, note };
+      items[idx] = { ...items[idx], month, week, title, cat, note, date: savedDateIso };
     }
     editingId = null;
   } else {
     const id = generateId();
-    items.push({ id, month, week, title, cat, note });
+    items.push({ id, month, week, title, cat, note, date: savedDateIso });
   }
   writeItems(items);
   resetForm();

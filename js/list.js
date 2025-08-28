@@ -3,7 +3,7 @@
 // DOM‑elementer ud fra en <template>. Event handlers kaldes via
 // callback‑objektet, så listen forbliver ren og uafhængig.
 
-import { sortItems } from './store.js';
+import { sortItems, CAT_COLORS } from './store.js';
 
 /**
  * Render aktiviteter i en given container.
@@ -29,11 +29,19 @@ export function renderList(listEl, items, callbacks) {
     const badge = document.createElement('span');
     badge.className = 'chip';
     badge.textContent = it.cat;
-    badge.style.marginRight = '6px';
+    badge.style.marginRight = '10px';
+    const color = CAT_COLORS[it.cat] || 'var(--accent)';
+    badge.style.background = color;
+    badge.style.borderColor = color;
     meta.innerHTML = '';
     meta.appendChild(badge);
-    meta.append(`${it.month} · Uge ${it.week}`);
+    const dateStr = new Date().toLocaleDateString('da-DK');
+    meta.append(`${it.month} · ${dateStr}`);
     el.querySelector('.note').textContent = it.note || '';
+    // more breathing room between tag and meta
+    el.querySelector('.item-content').style.display = 'grid';
+    el.querySelector('.item-content').style.gridTemplateColumns = 'auto 1fr';
+    el.querySelector('.item-content').style.gap = '10px 14px';
     // Rediger
     el.querySelector('[data-act="edit"]').addEventListener('click', () => {
       callbacks.onEdit(it);

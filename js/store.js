@@ -18,6 +18,17 @@ export const CATS = [
   'Andet'
 ];
 
+// Farver for kategorier – dybe, "luksuriøse" nuancer
+export const CAT_COLORS = {
+  'Releasemøde': '#8a2be2',     // BlueViolet
+  'Roadmapmøde': '#20b2aa',     // LightSeaGreen
+  'Netværksmøde': '#ff7f50',    // Coral
+  'KTU': '#ffd700',             // Gold
+  'Onboarding': '#7fffd4',      // Aquamarine
+  'Rapportmøde': '#ff69b4',     // HotPink
+  'Andet': '#87cefa'            // LightSkyBlue
+};
+
 const ITEMS_KEY = 'årshjul.admin.items';
 const NOTES_KEY = 'årshjul.admin.notes';
 const SETTINGS_KEY = 'årshjul.admin.settings';

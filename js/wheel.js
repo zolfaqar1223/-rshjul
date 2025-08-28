@@ -4,7 +4,7 @@
 // måned samt flytte aktiviteter via drag‑and‑drop. Selve tegningen
 // er opdelt i kvartaler, måneder og uger (52 segmenter).
 
-import { MONTHS } from './store.js';
+import { MONTHS, CAT_COLORS } from './store.js';
 import { polar, segPath } from './utils.js';
 
 /**
@@ -127,14 +127,17 @@ export function drawWheel(svg, items, callbacks) {
     txt.addEventListener('click', () => callbacks.openMonth(MONTHS[m]));
     svg.appendChild(txt);
   }
-  // Beregn ugetællinger (52 segmenter)
+  // Beregn ugetællinger (52 segmenter) og farver baseret på kategori
   const weekCounts = new Array(52).fill(0);
+  const weekColors = new Array(52).fill(null);
   items.forEach(it => {
     const mIndex = MONTHS.indexOf(it.month);
     const baseIndex = mIndex * 4 + (it.week - 1);
     const scaled = Math.round(baseIndex * 52 / 48);
     const idx = Math.min(scaled, 51);
     weekCounts[idx]++;
+    // Sæt farve – seneste farve vinder; kunne udvides til mix, men simpelt for nu
+    weekColors[idx] = CAT_COLORS[it.cat] || 'var(--accent)';
   });
   // Tegn 52 ugesegmenter
   for (let i = 0; i < 52; i++) {
@@ -167,7 +170,8 @@ export function drawWheel(svg, items, callbacks) {
       c.setAttribute('cx', bx);
       c.setAttribute('cy', by);
       c.setAttribute('r', 14);
-      c.setAttribute('fill', 'var(--accent)');
+      const dotColor = weekColors[i] || 'var(--accent)';
+      c.setAttribute('fill', dotColor);
       g.appendChild(c);
       const tt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       tt.setAttribute('x', bx);
