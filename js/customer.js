@@ -8,6 +8,10 @@ const viewerModal = document.getElementById('viewerModal');
 const viewerTitle = document.getElementById('viewerTitle');
 const viewerMeta = document.getElementById('viewerMeta');
 const viewerNote = document.getElementById('viewerNote');
+const viewerPrev = document.getElementById('viewerPrev');
+const viewerNext = document.getElementById('viewerNext');
+let orderedCache = [];
+let currentIndex = -1;
 
 let items = [];
 let notes = {};
@@ -29,6 +33,7 @@ function renderListReadOnly(listEl, itemsToShow) {
     if (a.week !== b.week) return a.week - b.week;
     return a.title.localeCompare(b.title);
   });
+  orderedCache = ordered;
   let currentMonth = null;
   ordered.forEach(it => {
     if (it.month !== currentMonth) {
@@ -57,7 +62,7 @@ function renderListReadOnly(listEl, itemsToShow) {
     if (it.note) content.appendChild(note);
     el.appendChild(content);
     el.style.cursor = 'pointer';
-    el.addEventListener('click', () => openViewer(it));
+    el.addEventListener('click', () => openViewerById(it));
     listEl.appendChild(el);
   });
 }
@@ -68,6 +73,12 @@ function openViewer(item) {
   viewerMeta.textContent = `${item.month} · Uge ${item.week} · ${item.cat}`;
   viewerNote.textContent = item.note || '';
   viewerModal.classList.add('open');
+}
+
+function openViewerById(item) {
+  const idx = orderedCache.findIndex(x => x === item);
+  currentIndex = idx;
+  openViewer(item);
 }
 
 function closeViewer() {
@@ -125,6 +136,28 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target === viewerModal) closeViewer();
     });
   }
+  if (viewerPrev) viewerPrev.addEventListener('click', () => {
+    if (orderedCache.length === 0) return;
+    currentIndex = (currentIndex - 1 + orderedCache.length) % orderedCache.length;
+    openViewer(orderedCache[currentIndex]);
+  });
+  if (viewerNext) viewerNext.addEventListener('click', () => {
+    if (orderedCache.length === 0) return;
+    currentIndex = (currentIndex + 1) % orderedCache.length;
+    openViewer(orderedCache[currentIndex]);
+  });
+  window.addEventListener('keydown', (e) => {
+    if (!viewerModal || !viewerModal.classList.contains('open')) return;
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      if (viewerPrev) viewerPrev.click();
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      if (viewerNext) viewerNext.click();
+    } else if (e.key === 'Escape') {
+      closeViewer();
+    }
+  });
 
   render(null);
   if (params.get('print') === '1') {

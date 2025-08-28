@@ -483,6 +483,8 @@ body.customer #listSection { grid-area: acts; }
 .customer .viewer-meta { font-size: 13px; opacity: .85; }
 .customer .viewer-note { font-size: 13px; opacity: .95; white-space: pre-wrap; }
 .customer .viewer-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+.customer .viewer-sheet button#viewerPrev,
+.customer .viewer-sheet button#viewerNext { padding: 6px 10px; }
 
 @media print {
   header,
