@@ -460,6 +460,12 @@ body.customer .wheel-wrap { grid-area: wheel; }
 body.customer #listSection { grid-area: acts; }
 /* Bigger wheel on customer */
 .customer .wheel-wrap { min-height: 820px; }
+/* Ensure wheel SVG scales large on customer view */
+.customer .wheel-wrap #wheel {
+  width: 100%;
+  max-width: 1000px;
+  height: auto;
+}
 
 /* Read-only item modal for customer */
 .customer .viewer-modal {

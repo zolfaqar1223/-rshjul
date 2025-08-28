@@ -21,13 +21,15 @@ export function drawWheel(svg, items, callbacks) {
   console.log('[YearWheel TEST] drawWheel kaldt, antal items =', Array.isArray(items) ? items.length : 'ukendt');
   // Ryd tidligere indhold
   svg.innerHTML = '';
-  const cx = 350;
-  const cy = 350;
+  const bbox = svg.getBoundingClientRect();
+  const size = Math.min(bbox.width || 700, 1000);
+  const cx = size / 2;
+  const cy = size / 2;
   // Definer radier for de forskellige ringe
   const rCenter = 50;
-  const rQuarterOuter = 160;
-  const rMonthOuter = 250;
-  const rWeekOuter = 320;
+  const rQuarterOuter = size * 0.23;
+  const rMonthOuter = size * 0.37;
+  const rWeekOuter = size * 0.46;
   // Midtercirkel
   const center = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
   center.setAttribute('cx', cx);
