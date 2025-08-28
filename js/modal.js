@@ -24,13 +24,13 @@ export function openModal(monthName, items, notes, callbacks) {
   const monthItems = sortItems(items).filter(x => x.month === monthName);
   if (monthItems.length === 0) {
     const empty = document.createElement('div');
-    empty.className = 'item';
+    empty.className = 'item glass';
     empty.textContent = 'Ingen aktiviteter';
     actsEl.appendChild(empty);
   } else {
     monthItems.forEach(x => {
       const d = document.createElement('div');
-      d.className = 'item';
+      d.className = 'item glass';
       d.style.flexDirection = 'column';
       d.style.gap = '4px';
       d.innerHTML = `<strong>${x.title}</strong><div class="meta">Uge ${x.week} · ${x.cat}</div>${x.note ? `<div class="note">${x.note}</div>` : ''}`;
