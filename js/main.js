@@ -30,7 +30,6 @@ let zoomLevel = 1;
 let settings = {};
 
 // DOM‑cache
-const monthSelect = document.getElementById('month');
 const dateInput = document.getElementById('date');
 const titleInput = document.getElementById('title');
 const categorySelect = document.getElementById('category');
@@ -329,8 +328,6 @@ function render() {
       });
     }
   }
-
-  // Calendar/upcoming removed
 }
 
 // ====== Initialiser hele appen ======
