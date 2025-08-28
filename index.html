@@ -12,8 +12,9 @@
   <header class="glass">
     <span class="logo" aria-label="KMD"></span>
     <h1>KMD Årshjul</h1>
+    <span style="margin-left:8px;color:#ffea00;font-weight:700;">[TEST: glass aktiv]</span>
     <div class="right">
-      <button id="btnShare">Del kunde-version</button>
+      <button id="btnPdf">Exportér PDF</button>
       <button class="ghost" id="btnJson">Export JSON</button>
       <label class="ghost import-label">
         Import JSON
@@ -48,8 +49,6 @@
     </section>
     <!-- Årshjul -->
     <section class="card glass wheel-wrap">
-      <h3>Årshjul</h3>
-      <div class="chips" id="filterChips"></div>
       <svg id="wheel" viewBox="0 0 700 700" aria-label="Årshjul"></svg>
     </section>
     <!-- Liste -->
@@ -71,20 +70,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Del kunde-version modal -->
-  <div class="modal" id="shareModal" style="display:none">
-    <div class="sheet glass">
-      <h2>Del kunde-version</h2>
-      <p>Vælg hvordan du vil dele årshjulet som read-only:</p>
-      <div class="modal-actions">
-        <button id="btnSharePdf">Eksportér PDF</button>
-        <button class="ghost" id="btnShareLink">Åbn delbart link</button>
-        <button class="ghost" id="btnShareClose">Luk</button>
-      </div>
-    </div>
-  </div>
-
   <!-- Template til listeelement -->
   <template id="itemTemplate">
     <div class="item glass" draggable="true">
