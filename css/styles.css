@@ -486,6 +486,20 @@ body.customer #listSection { grid-area: acts; }
 .customer .viewer-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
 .customer .viewer-sheet button#viewerPrev,
 .customer .viewer-sheet button#viewerNext { padding: 6px 10px; }
+.customer .viewer-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.customer .viewer-attachments .attach-chip {
+  background: rgba(255,255,255,0.06);
+  border: 1px dashed var(--muted);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: #cfe8e4;
+}
 
 @media print {
   header,

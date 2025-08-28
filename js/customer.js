@@ -10,6 +10,7 @@ const viewerMeta = document.getElementById('viewerMeta');
 const viewerNote = document.getElementById('viewerNote');
 const viewerPrev = document.getElementById('viewerPrev');
 const viewerNext = document.getElementById('viewerNext');
+const viewerAttach = document.getElementById('viewerAttach');
 let orderedCache = [];
 let currentIndex = -1;
 
@@ -38,10 +39,31 @@ function renderListReadOnly(listEl, itemsToShow) {
   ordered.forEach(it => {
     if (it.month !== currentMonth) {
       currentMonth = it.month;
-      const m = document.createElement('div');
-      m.className = 'group-title';
-      m.textContent = currentMonth;
-      listEl.appendChild(m);
+      const header = document.createElement('div');
+      header.className = 'group-title';
+      header.style.display = 'flex';
+      header.style.alignItems = 'center';
+      header.style.justifyContent = 'space-between';
+      const title = document.createElement('span');
+      title.textContent = currentMonth;
+      header.appendChild(title);
+      const mn = (notes && notes[currentMonth]) ? document.createElement('button') : null;
+      if (mn) {
+        mn.className = 'ghost';
+        mn.textContent = 'Månedsnoter';
+        mn.style.fontSize = '12px';
+        mn.addEventListener('click', () => {
+          // Open viewer with month notes only
+          openViewer({
+            title: `Månedsnoter · ${currentMonth}`,
+            month: currentMonth,
+            cat: '',
+            note: notes[currentMonth] || ''
+          });
+        });
+        header.appendChild(mn);
+      }
+      listEl.appendChild(header);
     }
     const el = document.createElement('div');
     el.className = 'item glass';
@@ -72,16 +94,26 @@ function renderListReadOnly(listEl, itemsToShow) {
 function openViewer(item) {
   if (!viewerModal) return;
   viewerTitle.textContent = item.title;
-  viewerMeta.textContent = `${item.month} · Uge ${item.week} · ${item.cat}`;
   const dateStr = item.date ? new Date(item.date).toLocaleDateString('da-DK') : '';
   viewerMeta.textContent = `${item.month} · ${dateStr} · ${item.cat}`;
   viewerNote.textContent = item.note || '';
   // attachments
-  if (item.attachments && item.attachments.length) {
-    const list = document.createElement('div');
-    list.style.marginTop = '8px';
-    list.innerHTML = item.attachments.map(a => `<a href="#" download="${a.name}" style="margin-right:10px;">${a.name}</a>`).join('');
-    viewerNote.appendChild(list);
+  if (viewerAttach) {
+    viewerAttach.innerHTML = '';
+    if (item.attachments && item.attachments.length) {
+      item.attachments.forEach(a => {
+        const chip = document.createElement('a');
+        chip.className = 'attach-chip';
+        chip.textContent = a.name;
+        if (a.dataUrl) {
+          chip.href = a.dataUrl;
+          chip.download = a.name;
+        } else {
+          chip.href = '#';
+        }
+        viewerAttach.appendChild(chip);
+      });
+    }
   }
   viewerModal.classList.add('open');
 }
