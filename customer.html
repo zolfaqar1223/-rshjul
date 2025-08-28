@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kundevisning · KMD Årshjul</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/glass.css" />
+</head>
+<body>
+  <header class="glass">
+    <span class="logo" aria-label="KMD"></span>
+    <h1>Kundevisning</h1>
+    <div class="right">
+      <button id="btnPrintCustomer">Download PDF</button>
+    </div>
+  </header>
+  <main class="wrap">
+    <section class="card glass wheel-wrap">
+      <h3>Årshjul</h3>
+      <svg id="wheel" viewBox="0 0 700 700" aria-label="Årshjul"></svg>
+    </section>
+    <section class="card glass" id="listSection">
+      <h3>Aktiviteter</h3>
+      <div id="list" class="list"></div>
+    </section>
+  </main>
+  <script type="module" src="js/customer.js"></script>
+</body>
+</html>
