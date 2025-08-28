@@ -70,6 +70,7 @@ function initChips() {
 // Filter chips for kategori
 function initFilterChips() {
   const wrap = document.getElementById('filterChips');
+  if (!wrap) return; // Mangler i DOM – skip uden at fejle
   wrap.innerHTML = '';
   const cats = ['Alle', ...CATS];
   cats.forEach(cat => {
@@ -88,6 +89,7 @@ function initFilterChips() {
 
 function updateFilterActive() {
   const wrap = document.getElementById('filterChips');
+  if (!wrap) return; // Ingen filterchips i denne visning
   const chips = [...wrap.querySelectorAll('.chip.glow')];
   chips.forEach(c => {
     if (c.textContent === activeCategory) c.classList.add('active');
@@ -177,13 +179,18 @@ function closeShareModal() {
   m.style.display = 'none';
 }
 function setupShareModal() {
-  document.getElementById('btnShare').addEventListener('click', openShareModal);
-  document.getElementById('btnShareClose').addEventListener('click', closeShareModal);
-  document.getElementById('btnSharePdf').addEventListener('click', () => {
+  const btnShare = document.getElementById('btnShare');
+  const btnShareClose = document.getElementById('btnShareClose');
+  const btnSharePdf = document.getElementById('btnSharePdf');
+  const btnShareLink = document.getElementById('btnShareLink');
+  if (!btnShare || !btnShareClose || !btnSharePdf || !btnShareLink) return; // Share UI findes ikke her
+  btnShare.addEventListener('click', openShareModal);
+  btnShareClose.addEventListener('click', closeShareModal);
+  btnSharePdf.addEventListener('click', () => {
     window.open('customer.html?print=1', '_blank');
     closeShareModal();
   });
-  document.getElementById('btnShareLink').addEventListener('click', () => {
+  btnShareLink.addEventListener('click', () => {
     window.open('customer.html', '_blank');
     closeShareModal();
   });
