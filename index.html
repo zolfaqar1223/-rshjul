@@ -19,7 +19,7 @@
   </header>
   <main class="wrap">
     <!-- Tilføj aktivitet -->
-    <section class="card glass" id="formSection">
+    <section class="card glass resizable" id="formSection">
       <h3>Tilføj aktivitet</h3>
       <label for="date">Dato
         <input id="date" type="date" />
@@ -40,18 +40,16 @@
       <div class="chips" id="chips"></div>
     </section>
     <!-- Årshjul -->
-    <section class="card glass wheel-wrap">
+    <section class="card glass wheel-wrap resizable">
       <div class="chips" id="filterChips"></div>
       <svg id="wheel" viewBox="0 0 700 700" aria-label="Årshjul"></svg>
     </section>
     <!-- Liste -->
-    <section class="card glass" id="listSection">
+    <section class="card glass resizable" id="listSection">
       <h3 style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-        <span>Kommende (6 uger)</span>
-        <button class="ghost" id="upcomingToggle" style="padding:4px 10px;">Skjul/vis</button>
+        <span>Aktiviteter</span>
+        <button class="ghost" id="activitiesToggle" style="padding:4px 10px;">Skjul/vis</button>
       </h3>
-      <div id="upcoming" class="list"></div>
-      <h3>Aktiviteter</h3>
       <div id="list" class="list"></div>
     </section>
   </main>

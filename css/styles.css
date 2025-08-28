@@ -112,6 +112,14 @@ button.ghost:hover {
   padding: 20px;
 }
 
+/* Resizable panels */
+.card[contenteditable="false"] { user-select: none; }
+.resizable {
+  resize: horizontal;
+  overflow: auto;
+  min-width: 260px;
+}
+
 .card {
   background: var(--panel);
   border: 1px solid var(--muted);

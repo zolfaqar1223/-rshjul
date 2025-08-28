@@ -317,16 +317,14 @@ function render() {
 
   applyZoom();
 
-  // Collapsible upcoming
-  const toggle = document.getElementById('upcomingToggle');
-  const up = document.getElementById('upcoming');
-  if (toggle && up) {
-    if (!toggle.dataset.bound) {
-      toggle.dataset.bound = '1';
-      toggle.addEventListener('click', () => {
-        up.style.display = up.style.display === 'none' ? '' : 'none';
-      });
-    }
+  // Collapsible activities
+  const aToggle = document.getElementById('activitiesToggle');
+  const listEl = document.getElementById('list');
+  if (aToggle && listEl && !aToggle.dataset.bound) {
+    aToggle.dataset.bound = '1';
+    aToggle.addEventListener('click', () => {
+      listEl.style.display = listEl.style.display === 'none' ? '' : 'none';
+    });
   }
 }
 
