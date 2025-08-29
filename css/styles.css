@@ -223,14 +223,14 @@ textarea {
 }
 
 .chip {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid var(--muted);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.22);
   padding: 6px 10px;
   border-radius: 999px;
   font-size: 12px;
   cursor: pointer;
   user-select: none;
-  border-color: rgba(255,255,255,0.18);
+  color: rgba(255,255,255,0.96);
 }
 
 .chip:hover {
@@ -312,6 +312,7 @@ textarea {
   font-weight: 700;
   font-size: 14px;
   margin-top: 6px;
+  color: rgba(255,255,255,0.96);
 }
 .upcoming-empty {
   opacity: 0.8;
@@ -414,8 +415,9 @@ svg {
 .item .meta,
 .item .note {
   font-size: 11px;
-  opacity: 0.8;
+  opacity: 0.92;
   margin-top: 1px;
+  color: rgba(255,255,255,0.96);
 }
 .item .meta { display: flex; align-items: center; gap: 10px; }
 /* Inline expandable details for list items */
