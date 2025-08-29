@@ -15,10 +15,10 @@
       <a class="ghost" href="index.html">Tilbage</a>
     </div>
   </header>
-  <main class="wrap" style="grid-template-columns: 1.2fr 1fr; grid-template-rows: auto auto auto auto; grid-template-areas: 'kpi list' 'insights charts' 'risks resources' 'changelog changelog';">
+  <main class="wrap" style="grid-template-columns: 1.4fr 1.6fr; grid-template-rows: auto auto auto auto; grid-template-areas: 'charts list' 'insights list' 'kpi resources' 'risks changelog';">
     <section class="card glass" id="kpiSection" style="gap:10px; grid-area: kpi;">
       <h3>KPI’er</h3>
-      <div id="kpiBar" style="display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:14px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch;"></div>
+      <div id="kpiBar" style="display:grid;grid-auto-flow:column;grid-auto-columns:minmax(160px,1fr);gap:12px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch;"></div>
     </section>
     <section class="card glass" id="insightsSection" style="grid-area: insights;">
       <h3>Indsigter</h3>

@@ -5,20 +5,20 @@ import { MONTHS, readItems, readNotes, STATUSES, CATS, readChangeLog } from './s
 function createTile(key, title, value, color) {
 	const el = document.createElement('div');
 	el.className = 'glass';
-	el.style.padding = '16px';
-	el.style.borderRadius = '14px';
-	el.style.border = '1px solid rgba(255,255,255,0.12)';
-	el.style.background = 'linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.08))';
-	el.style.boxShadow = '0 22px 48px rgba(0,0,0,0.36), 0 0 0 1px rgba(255,255,255,0.08)';
+	el.style.padding = '12px';
+	el.style.borderRadius = '12px';
+	el.style.border = '1px solid rgba(255,255,255,0.16)';
+	el.style.background = 'linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.10))';
+	el.style.boxShadow = '0 18px 40px rgba(0,0,0,0.32), 0 0 0 1px rgba(255,255,255,0.08)';
 	el.style.cursor = 'pointer';
 	const h = document.createElement('div');
-	h.style.fontSize = '12px';
-	h.style.opacity = '0.9';
+	h.style.fontSize = '11px';
+	h.style.opacity = '0.92';
 	h.textContent = title;
 	const v = document.createElement('div');
-	v.style.fontSize = '28px';
+	v.style.fontSize = '24px';
 	v.style.fontWeight = '800';
-	v.style.marginTop = '6px';
+	v.style.marginTop = '4px';
 	v.style.color = color;
 	v.textContent = value;
 	el.appendChild(h);
@@ -47,10 +47,10 @@ function renderKPIs(items, notes) {
 
 	// KPI set for single full-width row
 	const config = [
-		{ key: 'thisMonth', title: 'Aktiviteter denne måned', value: String(items.filter(i => i.month === MONTHS[new Date().getMonth()]).length), color: 'var(--text)' },
-		{ key: 'upcoming', title: 'Kommende releases', value: String(upcoming), color: '#60A5FA' },
-		{ key: 'noOwner', title: 'Aktiviteter uden ansvarlig', value: String(items.filter(i => !i.owner || String(i.owner).trim() === '').length), color: '#E4B7B2' },
-		{ key: 'doneYear', title: 'Afsluttede aktiviteter i år', value: String(items.filter(i => (i.status || 'Planlagt') === 'Afsluttet').length), color: '#6EE7B7' }
+		{ key: 'thisMonth', title: 'Denne måned', value: String(items.filter(i => i.month === MONTHS[new Date().getMonth()]).length), color: '#D4AF37' },
+		{ key: 'upcoming', title: 'Kommende', value: String(upcoming), color: '#60A5FA' },
+		{ key: 'noOwner', title: 'Uden ansvarlig', value: String(items.filter(i => !i.owner || String(i.owner).trim() === '').length), color: '#E4B7B2' },
+		{ key: 'doneYear', title: 'Afsluttet i år', value: String(items.filter(i => (i.status || 'Planlagt') === 'Afsluttet').length), color: '#6EE7B7' }
 	];
 	config.forEach(k => container.appendChild(createTile(k.key, k.title, k.value, k.color)));
 }
