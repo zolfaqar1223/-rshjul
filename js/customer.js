@@ -1,10 +1,13 @@
 // Kundevisning: read-only rendering af hjul og liste
-import { MONTHS, readItems, readNotes, CAT_COLORS } from './store.js';
+import { MONTHS, readItems, readNotes, CAT_COLORS, STATUSES, CATS } from './store.js';
 import { drawWheel } from './wheel.js';
 
 const wheelSvg = document.getElementById('wheel');
 // timeline UI removed
 const listContainer = document.getElementById('list');
+const nextBox = document.getElementById('nextBox');
+const filterCat = document.getElementById('custFilterCat');
+const filterStatus = document.getElementById('custFilterStatus');
 const monthNotesList = document.getElementById('monthNotesList');
 const seeAllBtn = document.getElementById('seeAllCustomer');
 const viewerModal = document.getElementById('viewerModal');
@@ -32,53 +35,61 @@ function renderListReadOnly(listEl, itemsToShow) {
   listEl.innerHTML = '';
   if (itemsToShow.length === 0) {
     const empty = document.createElement('div');
-    empty.className = 'item glass';
+    empty.className = 'empty';
     empty.textContent = 'Ingen aktiviteter';
     listEl.appendChild(empty);
     return;
   }
-  // sort by month then week then title
-  const ordered = [...itemsToShow].sort((a,b) => {
-    const ma = MONTHS.indexOf(a.month);
-    const mb = MONTHS.indexOf(b.month);
-    if (ma !== mb) return ma - mb;
-    if (a.week !== b.week) return a.week - b.week;
-    return a.title.localeCompare(b.title);
+  const ordered = groupByMonth(itemsToShow);
+  orderedCache = ordered.flatMap(g => g.items);
+  ordered.forEach(group => {
+    const header = document.createElement('div');
+    header.className = 'group-title';
+    header.textContent = group.month;
+    listEl.appendChild(header);
+    group.items.forEach(it => {
+      const el = document.createElement('div');
+      el.className = 'item glass';
+      const content = document.createElement('div');
+      content.className = 'item-content';
+      const title = document.createElement('strong');
+      title.className = 'title';
+      title.textContent = it.title;
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      const color = CAT_COLORS[it.cat] || 'var(--accent)';
+      const badge = `<span class=\"badge cat\" style=\"background:rgba(255,255,255,0.06);border-color:${color};color:${color};margin-right:10px;\">${it.cat}</span>`;
+      const dateStr = it.date ? new Date(it.date).toLocaleDateString('da-DK') : new Date().toLocaleDateString('da-DK');
+      meta.innerHTML = `${badge}${it.month} · ${dateStr}`;
+      const note = document.createElement('div');
+      note.className = 'note';
+      note.textContent = it.note || '';
+      // attachments
+      const attach = document.createElement('div');
+      attach.className = 'attachments';
+      if (it.attachments && it.attachments.length) {
+        it.attachments.forEach(a => {
+          const link = document.createElement('a'); link.className = 'attach-chip'; link.textContent = a.name; if (a.dataUrl) { link.href = a.dataUrl; link.download = a.name; } else { link.href = '#'; }
+          attach.appendChild(link);
+        });
+      }
+      content.appendChild(title);
+      content.appendChild(meta);
+      if (it.note) content.appendChild(note);
+      if (attach.children.length) content.appendChild(attach);
+      el.appendChild(content);
+      el.style.cursor = 'pointer';
+      el.addEventListener('click', () => openViewerById(it));
+      listEl.appendChild(el);
+    });
   });
-  orderedCache = ordered;
-  let currentMonth = null;
-  ordered.forEach(it => {
-    if (it.month !== currentMonth) {
-      currentMonth = it.month;
-      const header = document.createElement('div');
-      header.className = 'group-title';
-      header.textContent = currentMonth;
-      listEl.appendChild(header);
-    }
-    const el = document.createElement('div');
-    el.className = 'item glass';
-    const content = document.createElement('div');
-    content.className = 'item-content';
-    const title = document.createElement('strong');
-    title.className = 'title';
-    title.textContent = it.title;
-    const meta = document.createElement('div');
-    meta.className = 'meta';
-    const color = CAT_COLORS[it.cat] || 'var(--accent)';
-    const badge = `<span class=\"chip\" style=\"background:${color};border-color:${color};margin-right:10px;\">${it.cat}</span>`;
-    const dateStr = it.date ? new Date(it.date).toLocaleDateString('da-DK') : new Date().toLocaleDateString('da-DK');
-    meta.innerHTML = `${badge}${it.month} · ${dateStr}`;
-    const note = document.createElement('div');
-    note.className = 'note';
-    note.textContent = it.note || '';
-    content.appendChild(title);
-    content.appendChild(meta);
-    if (it.note) content.appendChild(note);
-    el.appendChild(content);
-    el.style.cursor = 'pointer';
-    el.addEventListener('click', () => openViewerById(it));
-    listEl.appendChild(el);
-  });
+}
+
+function groupByMonth(arr) {
+  const by = {};
+  arr.forEach(it => { (by[it.month] = by[it.month] || []).push(it); });
+  return MONTHS.map(m => ({ month: m, items: (by[m]||[]).sort((a,b)=> a.week===b.week ? a.title.localeCompare(b.title) : a.week-b.week) }))
+               .filter(g => g.items.length);
 }
 
 function renderMonthNotes(listEl) {
@@ -205,6 +216,24 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btnPrintCustomer').addEventListener('click', () => {
     window.print();
   });
+  // populate filters
+  if (filterCat && filterStatus) {
+    ['Alle', ...CATS].forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; filterCat.appendChild(o); });
+    ['Alle', ...STATUSES].forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; filterStatus.appendChild(o); });
+    const applyFilters = () => {
+      const cat = filterCat.value || 'Alle';
+      const st = filterStatus.value || 'Alle';
+      let arr = [...items];
+      if (cat !== 'Alle') arr = arr.filter(i => i.cat === cat);
+      if (st !== 'Alle') arr = arr.filter(i => (i.status||'Planlagt') === st);
+      renderListReadOnly(listContainer, arr);
+      renderNext(arr);
+    };
+    filterCat.addEventListener('change', applyFilters);
+    filterStatus.addEventListener('change', applyFilters);
+  }
+  // render next box
+  renderNext(items);
   // Add zoom controls on customer view
   const wrap = document.querySelector('.wheel-wrap');
   if (wrap && !wrap.querySelector('.zoom-controls')) {
@@ -298,3 +327,14 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => window.print(), 400);
   }
 });
+
+function renderNext(arr) {
+  if (!nextBox) return;
+  if (!arr || arr.length === 0) { nextBox.className = 'empty'; nextBox.textContent = 'Ingen planlagte aktiviteter'; return; }
+  const now = new Date();
+  const idx = arr.map(i => ({ i, k: MONTHS.indexOf(i.month)*4 + (i.week-1) })).sort((a,b)=> a.k - b.k).find(x => x.k >= Math.round((now.getMonth()*4)+((now.getDate()-1)/7)));
+  const it = (idx && idx.i) || arr[0];
+  nextBox.className = 'item glass';
+  const color = CAT_COLORS[it.cat] || 'var(--accent)';
+  nextBox.innerHTML = `<div class=\"item-content\"><strong>${it.title}</strong><div class=\"meta\"><span class=\"badge cat\" style=\"border-color:${color};color:${color};\">${it.cat}</span> ${it.month} · Uge ${it.week}</div>${it.note?`<div class=\"note\">${it.note}</div>`:''}</div>`;
+}
