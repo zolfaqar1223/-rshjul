@@ -250,9 +250,9 @@ function renderRisks(items) {
 
 function openAssignOwner(item) {
 	const dlg = document.createElement('div');
-	dlg.className = 'viewer-modal open';
+	dlg.className = 'modal open';
 	const sheet = document.createElement('div');
-	sheet.className = 'viewer-sheet glass';
+	sheet.className = 'sheet glass';
 	const h = document.createElement('h3'); h.textContent = `Tildel ansvarlig · ${item.title}`;
 	const meta = document.createElement('div'); meta.className = 'viewer-meta'; meta.textContent = `${item.month} · Uge ${item.week}`;
 	const row = document.createElement('div'); row.style.display = 'grid'; row.style.gridTemplateColumns = '1fr auto'; row.style.gap = '8px';
@@ -320,9 +320,9 @@ function openChangeDetail(entry) {
 	const before = data.before || null;
 	const after = data.after || null;
 	const dlg = document.createElement('div');
-	dlg.className = 'viewer-modal open';
+	dlg.className = 'modal open';
 	const sheet = document.createElement('div');
-	sheet.className = 'viewer-sheet glass';
+	sheet.className = 'sheet glass';
 	const h = document.createElement('h3');
 	h.textContent = entry.m;
 	const meta = document.createElement('div');
