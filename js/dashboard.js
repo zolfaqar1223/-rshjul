@@ -279,6 +279,41 @@ function renderChangeLog() {
 		d.className = 'item glass';
 		const dt = new Date(e.t).toLocaleString('da-DK');
 		d.innerHTML = `<div class="item-content"><strong>${e.m}</strong><div class="meta">${dt}</div></div>`;
+		d.style.cursor = 'pointer';
+		d.addEventListener('click', () => openChangeDetail(e));
 		el.appendChild(d);
 	});
+}
+
+function openChangeDetail(entry) {
+	const data = entry.d || {};
+	const before = data.before || null;
+	const after = data.after || null;
+	const dlg = document.createElement('div');
+	dlg.className = 'viewer-modal open';
+	const sheet = document.createElement('div');
+	sheet.className = 'viewer-sheet glass';
+	const h = document.createElement('h3');
+	h.textContent = entry.m;
+	const meta = document.createElement('div');
+	meta.className = 'viewer-meta';
+	meta.textContent = new Date(entry.t).toLocaleString('da-DK');
+	const pre = document.createElement('pre');
+	pre.style.whiteSpace = 'pre-wrap';
+	pre.style.fontSize = '12px';
+	pre.textContent = JSON.stringify({ before, after }, null, 2);
+	const actions = document.createElement('div');
+	actions.className = 'viewer-actions';
+	const close = document.createElement('button');
+	close.className = 'ghost';
+	close.textContent = 'Luk';
+	close.addEventListener('click', () => document.body.removeChild(dlg));
+	actions.appendChild(close);
+	sheet.appendChild(h);
+	sheet.appendChild(meta);
+	sheet.appendChild(pre);
+	sheet.appendChild(actions);
+	dlg.appendChild(sheet);
+	dlg.addEventListener('click', (e) => { if (e.target === dlg) document.body.removeChild(dlg); });
+	document.body.appendChild(dlg);
 }

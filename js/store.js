@@ -130,10 +130,10 @@ export function writeSettings(settings) {
  * Append a change log entry (prepend for latest first)
  * @param {string} message
  */
-export function logChange(message) {
+export function logChange(message, details = null) {
   try {
     const now = new Date();
-    const entry = { t: now.toISOString(), m: message };
+    const entry = { t: now.toISOString(), m: message, d: details };
     const raw = localStorage.getItem(CHANGELOG_KEY);
     const arr = raw ? JSON.parse(raw) : [];
     arr.unshift(entry);

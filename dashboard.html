@@ -15,16 +15,16 @@
       <a class="ghost" href="index.html">Tilbage</a>
     </div>
   </header>
-  <main class="wrap" style="grid-template-columns: 1fr; grid-template-areas: 'acts';">
-    <section class="card glass" id="kpiSection" style="gap:10px;">
+  <main class="wrap" style="grid-template-columns: 1.2fr 1fr; grid-template-rows: auto auto auto auto; grid-template-areas: 'kpi list' 'insights charts' 'risks resources' 'changelog changelog';">
+    <section class="card glass" id="kpiSection" style="gap:10px; grid-area: kpi;">
       <h3>KPI’er</h3>
       <div id="kpiBar" style="display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:14px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch;"></div>
     </section>
-    <section class="card glass" id="insightsSection">
+    <section class="card glass" id="insightsSection" style="grid-area: insights;">
       <h3>Indsigter</h3>
       <div id="insights" class="list"></div>
     </section>
-    <section class="card glass" id="chartsSection">
+    <section class="card glass" id="chartsSection" style="grid-area: charts;">
       <h3>Status & Kategorier</h3>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:center;">
         <div>
@@ -35,19 +35,19 @@
         </div>
       </div>
     </section>
-    <section class="card glass" id="risksSection">
+    <section class="card glass" id="risksSection" style="grid-area: risks;">
       <h3>Risikoområder</h3>
       <div id="risks" class="list"></div>
     </section>
-    <section class="card glass" id="resourcesSection">
+    <section class="card glass" id="resourcesSection" style="grid-area: resources;">
       <h3>Ressourcer</h3>
       <div id="resources" class="list"></div>
     </section>
-    <section class="card glass" id="changelogSection">
+    <section class="card glass" id="changelogSection" style="grid-area: changelog;">
       <h3>Ændringslog</h3>
       <div id="changelog" class="list"></div>
     </section>
-    <section class="card glass" id="listSection">
+    <section class="card glass" id="listSection" style="grid-area: list;">
       <h3 style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
         <span>Aktiviteter</span>
         <span style="display:inline-flex;gap:8px;align-items:center;">

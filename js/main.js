@@ -172,14 +172,17 @@ function saveItem() {
   if (editingId) {
     const idx = items.findIndex(x => x.id === editingId);
     if (idx > -1) {
+      const before = { ...items[idx] };
       items[idx] = { ...items[idx], month, week, title, owner, cat, status, note, date: savedDateIso, attachments };
+      const after = { ...items[idx] };
+      logChange(`Redigerede aktivitet: ${title}${owner ? ` · ${owner}` : ''}`, { type: 'edit', id: editingId, before, after });
     }
-    logChange(`Redigerede aktivitet: ${title}${owner ? ` · ${owner}` : ''}`);
     editingId = null;
   } else {
     const id = generateId();
-    items.push({ id, month, week, title, owner, cat, status, note, date: savedDateIso, attachments });
-    logChange(`Tilføjede aktivitet: ${title}${owner ? ` · ${owner}` : ''}`);
+    const item = { id, month, week, title, owner, cat, status, note, date: savedDateIso, attachments };
+    items.push(item);
+    logChange(`Tilføjede aktivitet: ${title}${owner ? ` · ${owner}` : ''}`, { type: 'create', id, after: item });
   }
   writeItems(items);
   resetForm();
@@ -188,11 +191,12 @@ function saveItem() {
 }
 
 function deleteItem(id) {
+  const before = items.find(x => x.id === id);
   items = items.filter(x => x.id !== id);
   writeItems(items);
   render();
   showToast('Aktivitet slettet', 'success');
-  logChange(`Slettede aktivitet (${id.substring(0,6)})`);
+  logChange(`Slettede aktivitet (${id.substring(0,6)})`, { type: 'delete', id, before });
 }
 
 function importJson(file) {
