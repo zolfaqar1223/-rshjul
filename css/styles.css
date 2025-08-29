@@ -4,11 +4,11 @@
   --panel: #0a3834;
   --muted: #1b4d45;
   --text: #e5f2f0;
-  --accent: #2a7a63; /* lighter KMD green for buttons */
-  --q1: #0f3c35;
-  --q2: #1a6b5b;
-  --q3: #2b9b86;
-  --q4: #84d3c1;
+  --accent: #00ffd1; /* neon aqua for high-end accent */
+  --q1: #6a00ff; /* electric violet */
+  --q2: #ff3b6b; /* hot pink */
+  --q3: #00e6ff; /* cyan */
+  --q4: #ffd166; /* warm gold */
 }
 
 *,
