@@ -12,7 +12,8 @@ import {
   writeNotes,
   readSettings,
   writeSettings,
-  generateId
+  generateId,
+  logChange
 } from './store.js';
 import { renderList } from './list.js';
 import { drawWheel } from './wheel.js';
@@ -41,6 +42,7 @@ let lastMouseY = 0;
 // DOM‑cache
 const dateInput = document.getElementById('date');
 const titleInput = document.getElementById('title');
+const ownerInput = document.getElementById('owner');
 const categorySelect = document.getElementById('category');
 const statusSelect = document.getElementById('status');
 const notesInput = document.getElementById('notes');
@@ -140,6 +142,7 @@ function updateFilterActive() {
 function resetForm() {
   editingId = null;
   titleInput.value = '';
+  if (ownerInput) ownerInput.value = '';
   notesInput.value = '';
   if (dateInput) dateInput.value = '';
 }
@@ -151,6 +154,7 @@ function saveItem() {
   const day = baseDate.getDate();
   const week = Math.max(1, Math.min(5, Math.ceil(day / 7)));
   const title = titleInput.value.trim();
+  const owner = ownerInput ? ownerInput.value.trim() : '';
   const cat = categorySelect.value;
   const status = (statusSelect && statusSelect.value) || 'Planlagt';
   const note = notesInput.value.trim();
@@ -168,12 +172,14 @@ function saveItem() {
   if (editingId) {
     const idx = items.findIndex(x => x.id === editingId);
     if (idx > -1) {
-      items[idx] = { ...items[idx], month, week, title, cat, status, note, date: savedDateIso, attachments };
+      items[idx] = { ...items[idx], month, week, title, owner, cat, status, note, date: savedDateIso, attachments };
     }
+    logChange(`Redigerede aktivitet: ${title}${owner ? ` · ${owner}` : ''}`);
     editingId = null;
   } else {
     const id = generateId();
-    items.push({ id, month, week, title, cat, status, note, date: savedDateIso, attachments });
+    items.push({ id, month, week, title, owner, cat, status, note, date: savedDateIso, attachments });
+    logChange(`Tilføjede aktivitet: ${title}${owner ? ` · ${owner}` : ''}`);
   }
   writeItems(items);
   resetForm();
@@ -186,6 +192,7 @@ function deleteItem(id) {
   writeItems(items);
   render();
   showToast('Aktivitet slettet', 'success');
+  logChange(`Slettede aktivitet (${id.substring(0,6)})`);
 }
 
 function importJson(file) {

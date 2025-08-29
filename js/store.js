@@ -40,6 +40,7 @@ export const STATUS_COLORS = {
 const ITEMS_KEY = 'årshjul.admin.items';
 const NOTES_KEY = 'årshjul.admin.notes';
 const SETTINGS_KEY = 'årshjul.admin.settings';
+const CHANGELOG_KEY = 'årshjul.admin.changelog';
 // Legacy keys kept for backward-compatible reads
 const ITEMS_KEY_OLD = 'aarshjul.admin.items';
 const NOTES_KEY_OLD = 'aarshjul.admin.notes';
@@ -122,6 +123,34 @@ export function writeSettings(settings) {
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
   } catch (err) {
     console.error('Kunne ikke skrive settings', err);
+  }
+}
+
+/**
+ * Append a change log entry (prepend for latest first)
+ * @param {string} message
+ */
+export function logChange(message) {
+  try {
+    const now = new Date();
+    const entry = { t: now.toISOString(), m: message };
+    const raw = localStorage.getItem(CHANGELOG_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    arr.unshift(entry);
+    localStorage.setItem(CHANGELOG_KEY, JSON.stringify(arr.slice(0, 1000)));
+  } catch (err) {
+    console.error('Kunne ikke skrive changelog', err);
+  }
+}
+
+export function readChangeLog(limit = 10) {
+  try {
+    const raw = localStorage.getItem(CHANGELOG_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr.slice(0, limit) : [];
+  } catch (err) {
+    console.error('Kunne ikke læse changelog', err);
+    return [];
   }
 }
 

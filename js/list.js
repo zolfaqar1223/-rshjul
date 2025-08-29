@@ -43,7 +43,8 @@ export function renderList(listEl, items, callbacks) {
     meta.appendChild(badge);
     meta.appendChild(statusBadge);
     const dateStr = new Date().toLocaleDateString('da-DK');
-    meta.append(` ${it.month} · ${dateStr}`);
+    const owner = it.owner ? ` · Ansvarlig: ${it.owner}` : '';
+    meta.append(` ${it.month} · ${dateStr}${owner}`);
 
     // Inline details (hidden by default)
     const details = document.createElement('div');

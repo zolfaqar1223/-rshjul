@@ -1,6 +1,6 @@
 // dashboard.js
 // Simple KPI dashboard using stored items/notes
-import { MONTHS, readItems, readNotes, STATUSES, CATS } from './store.js';
+import { MONTHS, readItems, readNotes, STATUSES, CATS, readChangeLog } from './store.js';
 
 function createTile(key, title, value, color) {
 	const el = document.createElement('div');
@@ -137,4 +137,148 @@ document.addEventListener('DOMContentLoaded', () => {
 	if (clearBtn) clearBtn.addEventListener('click', () => renderListFiltered(items));
 	// initial list: show all
 	renderListFiltered(items);
+
+	// Charts
+	renderStatusDonut(items);
+	renderCategoryBars(items);
+
+	// Risks and resources
+	renderRisks(items);
+	renderResources(items);
+
+	// Changelog
+	renderChangeLog();
 });
+
+// ===== Charts =====
+function renderStatusDonut(items) {
+	const svg = document.getElementById('statusDonut');
+	if (!svg) return;
+	svg.innerHTML = '';
+	const size = 160, cx = 80, cy = 80, r = 54, stroke = 16;
+	const map = STATUSES.map(s => ({ s, n: items.filter(i => (i.status || 'Planlagt') === s).length }));
+	const total = map.reduce((a,b) => a + b.n, 0) || 1;
+	let start = -Math.PI/2;
+	const colors = ['#6EE7B7', '#A78BFA', '#2C2C34'];
+	map.forEach((seg, idx) => {
+		const angle = (seg.n/total) * 2*Math.PI;
+		const end = start + angle;
+		const x1 = cx + r * Math.cos(start);
+		const y1 = cy + r * Math.sin(start);
+		const x2 = cx + r * Math.cos(end);
+		const y2 = cy + r * Math.sin(end);
+		const large = angle > Math.PI ? 1 : 0;
+		const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+		path.setAttribute('d', `M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2}`);
+		path.setAttribute('stroke', colors[idx % colors.length]);
+		path.setAttribute('stroke-width', String(stroke));
+		path.setAttribute('fill', 'none');
+		path.setAttribute('opacity', '0.9');
+		svg.appendChild(path);
+		start = end;
+	});
+}
+
+function renderCategoryBars(items) {
+	const svg = document.getElementById('categoryBars');
+	if (!svg) return;
+	svg.innerHTML = '';
+	const counts = CATS.map(c => ({ c, n: items.filter(i => i.cat === c).length }));
+	const max = Math.max(1, ...counts.map(x => x.n));
+	const w = 320, h = 160, pad = 18;
+	counts.forEach((row, i) => {
+		const barW = ((w - pad*2) * (row.n / max));
+		const y = pad + i * ((h - pad*2) / counts.length) + 6;
+		const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+		bg.setAttribute('x', String(pad));
+		bg.setAttribute('y', String(y));
+		bg.setAttribute('width', String(w - pad*2));
+		bg.setAttribute('height', '10');
+		bg.setAttribute('rx', '5');
+		bg.setAttribute('fill', 'rgba(255,255,255,0.08)');
+		svg.appendChild(bg);
+		const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+		rect.setAttribute('x', String(pad));
+		rect.setAttribute('y', String(y));
+		rect.setAttribute('width', String(barW));
+		rect.setAttribute('height', '10');
+		rect.setAttribute('rx', '5');
+		rect.setAttribute('fill', 'var(--accent)');
+		svg.appendChild(rect);
+		const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+		label.setAttribute('x', String(pad));
+		label.setAttribute('y', String(y - 4));
+		label.setAttribute('fill', '#E6E6EB');
+		label.setAttribute('font-size', '10');
+		label.textContent = `${row.c} (${row.n})`;
+		svg.appendChild(label);
+	});
+}
+
+// ===== Risks & Resources =====
+function renderRisks(items) {
+	const el = document.getElementById('risks');
+	if (!el) return;
+	el.innerHTML = '';
+	// risiko: mange aktiviteter i samme uge eller mangler ansvarlig
+	const grouped = {};
+	items.forEach(i => {
+		const key = `${i.month}-${i.week}`;
+		grouped[key] = grouped[key] || [];
+		grouped[key].push(i);
+	});
+	const risks = [];
+	Object.keys(grouped).forEach(k => {
+		const arr = grouped[k];
+		if (arr.length >= 3) risks.push({ t: `Høj belastning: ${k}`, d: `${arr.length} aktiviteter i samme uge`, link: arr[0] });
+	});
+	items.filter(i => !i.owner || String(i.owner).trim() === '').forEach(i => {
+		risks.push({ t: 'Mangler ansvarlig', d: `${i.title} (${i.month} · uge ${i.week})`, link: i });
+	});
+	if (!risks.length) {
+		const ok = document.createElement('div'); ok.className = 'item glass'; ok.textContent = 'Ingen risici fundet'; el.appendChild(ok); return;
+	}
+	risks.forEach(r => {
+		const d = document.createElement('div');
+		d.className = 'item glass';
+		d.innerHTML = `<div class="item-content"><strong>${r.t}</strong><div class="meta">${r.d}</div></div>`;
+		d.style.cursor = 'pointer';
+		d.addEventListener('click', () => window.location.href = 'index.html');
+		el.appendChild(d);
+	});
+}
+
+function renderResources(items) {
+	const el = document.getElementById('resources');
+	if (!el) return;
+	el.innerHTML = '';
+	const map = {};
+	items.forEach(i => {
+		const o = (i.owner || 'Ukendt').trim() || 'Ukendt';
+		map[o] = (map[o] || 0) + 1;
+	});
+	const rows = Object.keys(map).map(o => ({ o, n: map[o] })).sort((a,b) => b.n - a.n);
+	rows.forEach(r => {
+		const d = document.createElement('div');
+		d.className = 'item glass';
+		d.innerHTML = `<div class="item-content"><strong>${r.o}</strong><div class="meta">${r.n} aktiviteter</div></div>`;
+		el.appendChild(d);
+	});
+}
+
+function renderChangeLog() {
+	const el = document.getElementById('changelog');
+	if (!el) return;
+	el.innerHTML = '';
+	const entries = readChangeLog(10);
+	if (!entries.length) {
+		const d = document.createElement('div'); d.className = 'item glass'; d.textContent = 'Ingen nylige ændringer'; el.appendChild(d); return;
+	}
+	entries.forEach(e => {
+		const d = document.createElement('div');
+		d.className = 'item glass';
+		const dt = new Date(e.t).toLocaleString('da-DK');
+		d.innerHTML = `<div class="item-content"><strong>${e.m}</strong><div class="meta">${dt}</div></div>`;
+		el.appendChild(d);
+	});
+}
