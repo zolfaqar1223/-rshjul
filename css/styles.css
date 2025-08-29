@@ -167,13 +167,13 @@ button.ghost:hover {
 }
 
 .card {
-  background: var(--panel);
-  border: 1px solid transparent;
-  border-radius: 16px;
-  padding: 22px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 18px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   min-height: 0;
   backdrop-filter: blur(10px) saturate(140%);
   -webkit-backdrop-filter: blur(10px) saturate(140%);

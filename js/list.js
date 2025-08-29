@@ -27,14 +27,14 @@ export function renderList(listEl, items, callbacks) {
     el.querySelector('.title').textContent = it.title;
     const meta = el.querySelector('.meta');
     const badge = document.createElement('span');
-    badge.className = 'chip';
+    badge.className = 'badge cat';
     badge.textContent = it.cat;
     badge.style.marginRight = '10px';
     const color = CAT_COLORS[it.cat] || 'var(--accent)';
     badge.style.background = color;
     badge.style.borderColor = color;
     const statusBadge = document.createElement('span');
-    statusBadge.className = 'chip';
+    statusBadge.className = 'badge status';
     const sColor = STATUS_COLORS[it.status || 'Planlagt'] || '#999';
     statusBadge.style.background = sColor;
     statusBadge.style.borderColor = sColor;
