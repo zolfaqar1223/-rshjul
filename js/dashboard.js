@@ -185,15 +185,15 @@ function renderCategoryBars(items) {
 	svg.innerHTML = '';
 	const counts = CATS.map(c => ({ c, n: items.filter(i => i.cat === c).length }));
 	const max = Math.max(1, ...counts.map(x => x.n));
-	const w = 320, h = 160, pad = 18;
+	const w = 320, h = 200, pad = 20, rowH = (h - pad*2) / counts.length;
 	counts.forEach((row, i) => {
 		const barW = ((w - pad*2) * (row.n / max));
-		const y = pad + i * ((h - pad*2) / counts.length) + 6;
+		const y = pad + i * rowH + 10;
 		const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
 		bg.setAttribute('x', String(pad));
 		bg.setAttribute('y', String(y));
 		bg.setAttribute('width', String(w - pad*2));
-		bg.setAttribute('height', '10');
+		bg.setAttribute('height', '12');
 		bg.setAttribute('rx', '5');
 		bg.setAttribute('fill', 'rgba(255,255,255,0.08)');
 		svg.appendChild(bg);
@@ -201,13 +201,13 @@ function renderCategoryBars(items) {
 		rect.setAttribute('x', String(pad));
 		rect.setAttribute('y', String(y));
 		rect.setAttribute('width', String(barW));
-		rect.setAttribute('height', '10');
+		rect.setAttribute('height', '12');
 		rect.setAttribute('rx', '5');
 		rect.setAttribute('fill', 'var(--accent)');
 		svg.appendChild(rect);
 		const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
 		label.setAttribute('x', String(pad));
-		label.setAttribute('y', String(y - 4));
+		label.setAttribute('y', String(y - 6));
 		label.setAttribute('fill', '#E6E6EB');
 		label.setAttribute('font-size', '10');
 		label.textContent = `${row.c} (${row.n})`;
