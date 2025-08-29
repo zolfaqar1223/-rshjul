@@ -103,11 +103,11 @@ button:hover {
 }
 
 .marker {
-  transition: filter 120ms ease, transform 120ms ease;
+  transition: filter 160ms ease, transform 160ms ease;
 }
 .marker:hover {
-  filter: drop-shadow(0 0 8px var(--neon));
-  transform: scale(1.05);
+  filter: drop-shadow(0 0 6px var(--neon));
+  transform: scale(1.025);
 }
 
 /* Zoom controls */

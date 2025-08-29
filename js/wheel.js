@@ -21,8 +21,10 @@ export function drawWheel(svg, items, callbacks) {
   console.log('[YearWheel TEST] drawWheel kaldt, antal items =', Array.isArray(items) ? items.length : 'ukendt');
   // Ryd tidligere indhold
   svg.innerHTML = '';
-  const bbox = svg.getBoundingClientRect();
-  const size = Math.min(bbox.width || 700, 1000);
+  // Use container width to avoid CSS transform affecting measurement
+  const container = svg.parentElement;
+  const cw = container ? container.getBoundingClientRect().width : 0;
+  const size = Math.min(cw || svg.clientWidth || 700, 1000);
   const cx = size / 2;
   const cy = size / 2;
   // Definer radier for de forskellige ringe
@@ -200,8 +202,12 @@ export function drawWheel(svg, items, callbacks) {
         const monthName = MONTHS[approxMonthIndex];
         const segInMonth = i - Math.round(approxMonthIndex * 52 / 12);
         const weekNum = Math.max(1, Math.min(5, Math.round((segInMonth * 4) / (52 / 12)) + 1));
-        if (callbacks.openWeek) callbacks.openWeek(monthName, weekNum);
-        else callbacks.openMonth(monthName);
+        if (callbacks.openWeek) {
+          // Defer to next frame for smoother UI and to avoid size jank
+          requestAnimationFrame(() => callbacks.openWeek(monthName, weekNum));
+        } else {
+          requestAnimationFrame(() => callbacks.openMonth(monthName));
+        }
       });
       svg.appendChild(g);
     }
