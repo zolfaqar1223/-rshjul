@@ -367,6 +367,10 @@ svg {
   margin-top: 1px;
 }
 .item .meta { display: flex; align-items: center; gap: 10px; }
+/* Inline expandable details for list items */
+.inline-details { margin-top: 8px; border-top: 1px dashed var(--muted); padding-top: 8px; }
+.attachments { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.attach-chip { background: rgba(255,255,255,0.06); border: 1px solid var(--muted); padding: 4px 8px; border-radius: 999px; font-size: 11px; color: var(--text); text-decoration: none; }
 
 .actions {
   display: flex;

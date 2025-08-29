@@ -44,16 +44,40 @@ export function renderList(listEl, items, callbacks) {
     meta.appendChild(statusBadge);
     const dateStr = new Date().toLocaleDateString('da-DK');
     meta.append(` ${it.month} · ${dateStr}`);
-    el.querySelector('.note').textContent = it.note || '';
-    // more breathing room between tag and meta
+
+    // Inline details (hidden by default)
+    const details = document.createElement('div');
+    details.className = 'inline-details';
+    details.style.display = 'none';
+    if (it.note) {
+      const noteDiv = document.createElement('div');
+      noteDiv.className = 'note';
+      noteDiv.textContent = it.note;
+      details.appendChild(noteDiv);
+    }
+    if (it.attachments && it.attachments.length) {
+      const files = document.createElement('div');
+      files.className = 'attachments';
+      it.attachments.forEach(a => {
+        const link = document.createElement('a');
+        link.textContent = a.name;
+        link.className = 'attach-chip';
+        if (a.dataUrl) { link.href = a.dataUrl; link.download = a.name; } else { link.href = '#'; }
+        files.appendChild(link);
+      });
+      details.appendChild(files);
+    }
+    el.querySelector('.item-content').appendChild(details);
+
+    // Grid layout for a bit more space
     el.querySelector('.item-content').style.display = 'grid';
     el.querySelector('.item-content').style.gridTemplateColumns = 'auto 1fr';
     el.querySelector('.item-content').style.gap = '10px 14px';
+
     // Rediger
     el.querySelector('[data-act="edit"]').addEventListener('click', () => {
       callbacks.onEdit(it);
     });
-    // Åbn måned knap fjernet – edit åbner direkte
     // Slet
     el.querySelector('[data-act="del"]').addEventListener('click', () => {
       callbacks.onDelete(it.id);
@@ -62,6 +86,13 @@ export function renderList(listEl, items, callbacks) {
     el.addEventListener('dragstart', e => {
       e.dataTransfer.setData('text/plain', it.id);
     });
+    // Toggle inline details when clicking item (ignore clicks in actions)
+    el.addEventListener('click', e => {
+      if (e.target.closest('.actions')) return;
+      const open = details.style.display !== 'none';
+      details.style.display = open ? 'none' : 'block';
+    });
+
     listEl.appendChild(el);
   });
 }
