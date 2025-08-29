@@ -264,13 +264,44 @@ function renderResources(items) {
 		d.innerHTML = `<div class="item-content"><strong>${r.o}</strong><div class="meta">${r.n} aktiviteter</div></div>`;
 		el.appendChild(d);
 	});
+
+	// quick-assign for missing owners
+	const missing = items.filter(i => !i.owner || String(i.owner).trim() === '');
+	if (missing.length) {
+		const box = document.createElement('div');
+		box.className = 'item glass';
+		box.style.flexDirection = 'column';
+		box.style.gap = '6px';
+		const title = document.createElement('strong');
+		title.textContent = 'Tilføj ansvarlig (hurtig)';
+		const wrap = document.createElement('div');
+		wrap.style.display = 'grid';
+		wrap.style.gridTemplateColumns = '1fr auto auto';
+		wrap.style.gap = '6px';
+		const select = document.createElement('select');
+		const uniqOwners = rows.map(r => r.o).filter(o => o !== 'Ukendt');
+		['Vælg ansvarlig', ...uniqOwners].forEach(o => { const opt = document.createElement('option'); opt.value = o === 'Vælg ansvarlig' ? '' : o; opt.textContent = o; select.appendChild(opt); });
+		const input = document.createElement('input'); input.placeholder = 'Eller skriv navn…';
+		const btn = document.createElement('button'); btn.textContent = 'Tildel til alle uden'; btn.className = 'ghost';
+		btn.addEventListener('click', () => {
+			const chosen = input.value.trim() || select.value.trim();
+			if (!chosen) return;
+			const ls = JSON.parse(localStorage.getItem('årshjul.admin.items')||'[]');
+			ls.forEach(it => { if (!it.owner || String(it.owner).trim() === '') it.owner = chosen; });
+			localStorage.setItem('årshjul.admin.items', JSON.stringify(ls));
+			location.reload();
+		});
+		wrap.appendChild(select); wrap.appendChild(input); wrap.appendChild(btn);
+		box.appendChild(title); box.appendChild(wrap);
+		el.appendChild(box);
+	}
 }
 
 function renderChangeLog() {
 	const el = document.getElementById('changelog');
 	if (!el) return;
 	el.innerHTML = '';
-	const entries = readChangeLog(10);
+	const entries = (readChangeLog(10) || []).filter(e => e && e.d && e.d.type === 'edit');
 	if (!entries.length) {
 		const d = document.createElement('div'); d.className = 'item glass'; d.textContent = 'Ingen nylige ændringer'; el.appendChild(d); return;
 	}

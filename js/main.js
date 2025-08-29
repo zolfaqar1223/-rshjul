@@ -503,6 +503,14 @@ document.addEventListener('DOMContentLoaded', () => {
   initListFilters();
   initStatusFilter();
   setupShareModal();
+  // help modal
+  const btnHelp = document.getElementById('btnHelp');
+  if (btnHelp) {
+    const m = document.getElementById('helpModal');
+    const close = document.getElementById('btnCloseHelp');
+    btnHelp.addEventListener('click', () => { if (m) m.classList.add('open'); });
+    if (close) close.addEventListener('click', () => { if (m) m.classList.remove('open'); });
+  }
   setupZoomControls();
   setupWheelScrollZoom();
   // knapper

@@ -14,6 +14,7 @@
     <h1>KMD Årshjul</h1>
     <div class="right">
       <a href="dashboard.html" class="ghost" id="btnDashboard">Dashboard</a>
+      <button class="ghost" id="btnHelp">Hjælp</button>
       <button id="btnPdf">Exportér PDF</button>
       <button id="btnShare">Del med kunde</button>
     </div>
@@ -106,6 +107,21 @@
         <button class="ghost" id="btnShareLink">Åbn kundevisning</button>
         <button class="ghost" id="btnShareCopy">Kopier link</button>
         <button class="ghost" id="btnShareClose">Luk</button>
+      </div>
+    </div>
+  </div>
+  <!-- Onboarding modal -->
+  <div class="modal" id="helpModal">
+    <div class="sheet glass">
+      <h2>Velkommen til KMD Årshjul</h2>
+      <div style="display:grid;gap:8px;">
+        <div class="item glass"><div class="item-content"><strong>Tilføj aktiviteter</strong><div class="note">Brug formularen til venstre. Vælg dato, kategori, status og evt. ansvarlig.</div></div></div>
+        <div class="item glass"><div class="item-content"><strong>Årshjulet</strong><div class="note">Klik på en måned for at se aktiviteter eller træk elementer for at flytte dem.</div></div></div>
+        <div class="item glass"><div class="item-content"><strong>Liste</strong><div class="note">Redigér eller slet aktiviteter. Klik for at folde detaljer ud.</div></div></div>
+        <div class="item glass"><div class="item-content"><strong>Del</strong><div class="note">Åbn kundevisning eller kopier link fra "Del med kunde".</div></div></div>
+      </div>
+      <div class="modal-actions">
+        <button class="ghost" id="btnCloseHelp">Luk</button>
       </div>
     </div>
   </div>
