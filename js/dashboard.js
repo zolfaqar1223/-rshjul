@@ -243,9 +243,37 @@ function renderRisks(items) {
 		d.className = 'item glass';
 		d.innerHTML = `<div class="item-content"><strong>${r.t}</strong><div class="meta">${r.d}</div></div>`;
 		d.style.cursor = 'pointer';
-		d.addEventListener('click', () => window.location.href = 'index.html');
+		d.addEventListener('click', () => openAssignOwner(r.link));
 		el.appendChild(d);
 	});
+}
+
+function openAssignOwner(item) {
+	const dlg = document.createElement('div');
+	dlg.className = 'viewer-modal open';
+	const sheet = document.createElement('div');
+	sheet.className = 'viewer-sheet glass';
+	const h = document.createElement('h3'); h.textContent = `Tildel ansvarlig · ${item.title}`;
+	const meta = document.createElement('div'); meta.className = 'viewer-meta'; meta.textContent = `${item.month} · Uge ${item.week}`;
+	const row = document.createElement('div'); row.style.display = 'grid'; row.style.gridTemplateColumns = '1fr auto'; row.style.gap = '8px';
+	const input = document.createElement('input'); input.placeholder = 'Skriv navn…'; input.value = item.owner || '';
+	const btn = document.createElement('button'); btn.textContent = 'Gem';
+	btn.addEventListener('click', () => {
+		const ls = JSON.parse(localStorage.getItem('årshjul.admin.items')||'[]');
+		const idx = ls.findIndex(x => x.id === item.id);
+		if (idx > -1) {
+			ls[idx].owner = input.value.trim();
+			localStorage.setItem('årshjul.admin.items', JSON.stringify(ls));
+			document.body.removeChild(dlg);
+			location.reload();
+		}
+	});
+	row.appendChild(input); row.appendChild(btn);
+	const actions = document.createElement('div'); actions.className = 'viewer-actions'; const close = document.createElement('button'); close.className = 'ghost'; close.textContent = 'Luk'; close.addEventListener('click', () => document.body.removeChild(dlg)); actions.appendChild(close);
+	sheet.appendChild(h); sheet.appendChild(meta); sheet.appendChild(row); sheet.appendChild(actions);
+	dlg.appendChild(sheet);
+	dlg.addEventListener('click', (e) => { if (e.target === dlg) document.body.removeChild(dlg); });
+	document.body.appendChild(dlg);
 }
 
 function renderResources(items) {
@@ -265,36 +293,7 @@ function renderResources(items) {
 		el.appendChild(d);
 	});
 
-	// quick-assign for missing owners
-	const missing = items.filter(i => !i.owner || String(i.owner).trim() === '');
-	if (missing.length) {
-		const box = document.createElement('div');
-		box.className = 'item glass';
-		box.style.flexDirection = 'column';
-		box.style.gap = '6px';
-		const title = document.createElement('strong');
-		title.textContent = 'Tilføj ansvarlig (hurtig)';
-		const wrap = document.createElement('div');
-		wrap.style.display = 'grid';
-		wrap.style.gridTemplateColumns = '1fr auto auto';
-		wrap.style.gap = '6px';
-		const select = document.createElement('select');
-		const uniqOwners = rows.map(r => r.o).filter(o => o !== 'Ukendt');
-		['Vælg ansvarlig', ...uniqOwners].forEach(o => { const opt = document.createElement('option'); opt.value = o === 'Vælg ansvarlig' ? '' : o; opt.textContent = o; select.appendChild(opt); });
-		const input = document.createElement('input'); input.placeholder = 'Eller skriv navn…';
-		const btn = document.createElement('button'); btn.textContent = 'Tildel til alle uden'; btn.className = 'ghost';
-		btn.addEventListener('click', () => {
-			const chosen = input.value.trim() || select.value.trim();
-			if (!chosen) return;
-			const ls = JSON.parse(localStorage.getItem('årshjul.admin.items')||'[]');
-			ls.forEach(it => { if (!it.owner || String(it.owner).trim() === '') it.owner = chosen; });
-			localStorage.setItem('årshjul.admin.items', JSON.stringify(ls));
-			location.reload();
-		});
-		wrap.appendChild(select); wrap.appendChild(input); wrap.appendChild(btn);
-		box.appendChild(title); box.appendChild(wrap);
-		el.appendChild(box);
-	}
+	// quick-assign removed; assigning is handled from Risks widget
 }
 
 function renderChangeLog() {

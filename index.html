@@ -14,9 +14,9 @@
     <h1>KMD Årshjul</h1>
     <div class="right">
       <a href="dashboard.html" class="ghost" id="btnDashboard">Dashboard</a>
-      <button class="ghost" id="btnHelp">Hjælp</button>
       <button id="btnPdf">Exportér PDF</button>
       <button id="btnShare">Del med kunde</button>
+      <button class="ghost" id="btnHelp">Hjælp</button>
     </div>
   </header>
   <main class="wrap">
@@ -113,12 +113,11 @@
   <!-- Onboarding modal -->
   <div class="modal" id="helpModal">
     <div class="sheet glass">
-      <h2>Velkommen til KMD Årshjul</h2>
-      <div style="display:grid;gap:8px;">
-        <div class="item glass"><div class="item-content"><strong>Tilføj aktiviteter</strong><div class="note">Brug formularen til venstre. Vælg dato, kategori, status og evt. ansvarlig.</div></div></div>
-        <div class="item glass"><div class="item-content"><strong>Årshjulet</strong><div class="note">Klik på en måned for at se aktiviteter eller træk elementer for at flytte dem.</div></div></div>
-        <div class="item glass"><div class="item-content"><strong>Liste</strong><div class="note">Redigér eller slet aktiviteter. Klik for at folde detaljer ud.</div></div></div>
-        <div class="item glass"><div class="item-content"><strong>Del</strong><div class="note">Åbn kundevisning eller kopier link fra "Del med kunde".</div></div></div>
+      <h2>Hjælp & Onboarding</h2>
+      <input id="helpSearch" placeholder="Søg efter funktion eller widget..." />
+      <div style="display:grid;grid-template-columns: 0.6fr 1.4fr; gap: 12px; min-height: 260px;">
+        <div id="helpList" class="calendar-view" style="overflow:auto;"></div>
+        <div id="helpDetail" class="calendar-view" style="overflow:auto; padding:12px;"></div>
       </div>
       <div class="modal-actions">
         <button class="ghost" id="btnCloseHelp">Luk</button>

@@ -508,6 +508,43 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnHelp) {
     const m = document.getElementById('helpModal');
     const close = document.getElementById('btnCloseHelp');
+    // build help index
+    const helpIndex = [
+      { key: 'form', title: 'Formular: Tilføj aktivitet', body: 'Udfyld dato, titel, kategori, status, evt. ansvarlig og noter. Klik Gem.' },
+      { key: 'wheel', title: 'Årshjul', body: 'Klik på måneder/uger for at åbne detaljer. Træk aktiviteter mellem måneder/uger.' },
+      { key: 'list', title: 'Aktivitetsliste', body: 'Klik for at folde detaljer ud, redigér, slet eller træk for at omplacere.' },
+      { key: 'share', title: 'Del med kunde', body: 'Åbn kundevisning eller kopier link. PDF-understøttelse.' },
+      { key: 'customer', title: 'Kundevisning', body: 'Læsbar visning af årshjul og liste. Print/PDF-knap.' },
+      { key: 'dashboard', title: 'Dashboard', body: 'KPI’er, status/kategorier, risici, ressourcer og ændringslog.' },
+      { key: 'kpi', title: 'KPI’er', body: 'Klik på en KPI for at filtrere aktivitetslisten.' },
+      { key: 'risks', title: 'Risikoområder', body: 'Overblik over høj belastning og manglende ansvarlige. Klik for at tildele ansvarlig.' },
+      { key: 'resources', title: 'Ressourcer', body: 'Antal aktiviteter per ansvarlig.' },
+      { key: 'changelog', title: 'Ændringslog', body: 'Historik over redigeringer. Klik for at se før/efter.' }
+    ];
+    const list = document.getElementById('helpList');
+    const detail = document.getElementById('helpDetail');
+    const search = document.getElementById('helpSearch');
+    function renderList(q=''){
+      if (!list || !detail) return;
+      list.innerHTML='';
+      const ql = q.trim().toLowerCase();
+      helpIndex.filter(i=>!ql || i.title.toLowerCase().includes(ql) || i.body.toLowerCase().includes(ql)).forEach(i=>{
+        const it = document.createElement('div');
+        it.className = 'cal-item';
+        it.textContent = i.title;
+        it.style.cursor = 'pointer';
+        it.addEventListener('click',()=>{
+          detail.innerHTML = `<h3 style="margin-bottom:6px;">${i.title}</h3><div class="note">${i.body}</div>`;
+        });
+        list.appendChild(it);
+      });
+      if (!detail.innerHTML) {
+        const first = helpIndex[0];
+        detail.innerHTML = `<h3 style="margin-bottom:6px;">${first.title}</h3><div class="note">${first.body}</div>`;
+      }
+    }
+    if (search) search.addEventListener('input', ()=>renderList(search.value));
+    renderList('');
     btnHelp.addEventListener('click', () => { if (m) m.classList.add('open'); });
     if (close) close.addEventListener('click', () => { if (m) m.classList.remove('open'); });
   }
