@@ -174,6 +174,16 @@ export function drawWheel(svg, items, callbacks) {
       c.setAttribute('r', 14);
       const dotColor = weekColors[i] || 'var(--accent)';
       c.setAttribute('fill', dotColor);
+      c.setAttribute('stroke', 'rgba(255,255,255,0.85)');
+      c.setAttribute('stroke-width', '1');
+      const c2 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c2.setAttribute('cx', bx);
+      c2.setAttribute('cy', by);
+      c2.setAttribute('r', 17);
+      c2.setAttribute('fill', 'transparent');
+      c2.setAttribute('stroke', 'rgba(212,175,55,0.55)');
+      c2.setAttribute('stroke-width', '1');
+      g.appendChild(c2);
       g.appendChild(c);
       const tt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       tt.setAttribute('x', bx);
