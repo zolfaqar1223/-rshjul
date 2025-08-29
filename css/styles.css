@@ -330,7 +330,7 @@ svg {
 .list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 14px;
   max-height: 38vh;
   overflow: auto;
 }
@@ -342,14 +342,15 @@ svg {
 .toggle-btn .label { opacity: 0.9; }
 
 .item {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 10px;
-  padding: 10px 12px;
+  padding: 14px 16px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 10px;
+  transition: transform 200ms ease, box-shadow 220ms ease, background 220ms ease, border-color 220ms ease;
 }
 
 .item-content {
@@ -380,7 +381,7 @@ svg {
 
 .item .actions button {
   font-size: 12px;
-  padding: 4px 10px;
+  padding: 6px 12px;
   border-radius: 8px;
   cursor: pointer;
   line-height: 1;
@@ -417,6 +418,7 @@ svg {
 }
 .modal.open {
   display: flex;
+  animation: fadeIn 180ms ease;
 }
 
 .sheet {
@@ -430,6 +432,7 @@ svg {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.06), inset 0 1px 0 rgba(255,255,255,0.06);
 }
 
 .sheet h2 {
@@ -551,3 +554,8 @@ body.customer #listSection { grid-area: acts; }
 }
 
 /* Timeline styles removed */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

@@ -7,15 +7,15 @@
 }
 
 .glass {
-  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
-  border: 1px solid var(--glass-border);
+  background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.08));
+  border: 1px solid rgba(255,255,255,0.22);
   border-radius: 16px;
-  backdrop-filter: blur(18px) saturate(170%);
-  -webkit-backdrop-filter: blur(18px) saturate(170%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   box-shadow:
     inset 0 1px 0 var(--glass-inner),
-    0 18px 40px rgba(0, 0, 0, 0.28),
-    0 0 0 1px rgba(255, 255, 255, 0.06);
+    0 22px 48px rgba(0, 0, 0, 0.36),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 header.glass {
@@ -41,7 +41,7 @@ button:hover {
 }
 
 .card.glass, .sheet.glass, .item.glass {
-  background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
+  background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.08));
 }
 
 /* Subtle elevation on hover */
@@ -52,8 +52,8 @@ button:hover {
   transform: translateY(-2px);
   box-shadow:
     inset 0 1px 0 var(--glass-inner),
-    0 22px 46px rgba(0, 0, 0, 0.32),
-    0 0 0 1px rgba(255, 255, 255, 0.08);
+    0 28px 64px rgba(0, 0, 0, 0.42),
+    0 0 0 1px rgba(255, 255, 255, 0.10);
 }
 
 /* Glow chips for filters */

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard · KMD Årshjul</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/glass.css" />
+</head>
+<body>
+  <header class="glass">
+    <span class="logo" aria-label="KMD"></span>
+    <h1>Dashboard</h1>
+    <div class="right">
+      <a class="ghost" href="index.html">Tilbage</a>
+    </div>
+  </header>
+  <main class="wrap" style="grid-template-columns: 1fr; grid-template-areas: 'acts';">
+    <section class="card glass" id="kpiSection">
+      <h3>KPI’er</h3>
+      <div id="kpiGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px;"></div>
+    </section>
+    <section class="card glass" id="insightsSection">
+      <h3>Indsigter</h3>
+      <div id="insights" class="list"></div>
+    </section>
+  </main>
+  <script type="module" src="js/dashboard.js"></script>
+</body>
+</html>
