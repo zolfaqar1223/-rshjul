@@ -308,7 +308,8 @@ function renderChangeLog() {
 		const d = document.createElement('div');
 		d.className = 'item glass';
 		const dt = new Date(e.t).toLocaleString('da-DK');
-		d.innerHTML = `<div class="item-content"><strong>${e.m}</strong><div class="meta">${dt}</div></div>`;
+		const summary = summarizeChange(e);
+		d.innerHTML = `<div class="item-content"><strong>${summary}</strong><div class="meta">${dt}</div></div>`;
 		d.style.cursor = 'pointer';
 		d.addEventListener('click', () => openChangeDetail(e));
 		el.appendChild(d);
@@ -324,14 +325,14 @@ function openChangeDetail(entry) {
 	const sheet = document.createElement('div');
 	sheet.className = 'sheet glass';
 	const h = document.createElement('h3');
-	h.textContent = entry.m;
+	h.textContent = summarizeChange(entry);
 	const meta = document.createElement('div');
 	meta.className = 'viewer-meta';
 	meta.textContent = new Date(entry.t).toLocaleString('da-DK');
-	const pre = document.createElement('pre');
-	pre.style.whiteSpace = 'pre-wrap';
-	pre.style.fontSize = '12px';
-	pre.textContent = JSON.stringify({ before, after }, null, 2);
+	const details = document.createElement('ul');
+	details.style.margin = '6px 0 0 18px';
+	details.style.padding = '0';
+	summarizeChangeList(entry).forEach(line => { const li = document.createElement('li'); li.textContent = line; details.appendChild(li); });
 	const actions = document.createElement('div');
 	actions.className = 'viewer-actions';
 	const close = document.createElement('button');
@@ -341,9 +342,36 @@ function openChangeDetail(entry) {
 	actions.appendChild(close);
 	sheet.appendChild(h);
 	sheet.appendChild(meta);
-	sheet.appendChild(pre);
+	sheet.appendChild(details);
 	sheet.appendChild(actions);
 	dlg.appendChild(sheet);
 	dlg.addEventListener('click', (e) => { if (e.target === dlg) document.body.removeChild(dlg); });
 	document.body.appendChild(dlg);
+}
+
+function summarizeChange(entry) {
+	const b = (entry.d && entry.d.before) || {};
+	const a = (entry.d && entry.d.after) || {};
+	const parts = [];
+	const fromMW = `${b.month || ''} uge ${b.week || ''}`.trim();
+	const toMW = `${a.month || ''} uge ${a.week || ''}`.trim();
+	if (b.month !== a.month || b.week !== a.week) parts.push(`${a.title || b.title || 'Aktivitet'} flyttet fra ${fromMW} → ${toMW}`);
+	if (b.status !== a.status) parts.push(`Status: ${b.status || 'ukendt'} → ${a.status || 'ukendt'}`);
+	if (b.owner !== a.owner) parts.push(`Ansvarlig: ${b.owner || '—'} → ${a.owner || '—'}`);
+	if (!parts.length && b.title !== a.title) parts.push(`Titel: "${b.title || ''}" → "${a.title || ''}"`);
+	if (!parts.length && b.cat !== a.cat) parts.push(`Kategori: ${b.cat || '—'} → ${a.cat || '—'}`);
+	return parts.join(' · ') || (entry.m || 'Ændring');
+}
+
+function summarizeChangeList(entry) {
+	const b = (entry.d && entry.d.before) || {};
+	const a = (entry.d && entry.d.after) || {};
+	const lines = [];
+	if (b.title !== a.title) lines.push(`Titel: "${b.title || ''}" → "${a.title || ''}"`);
+	if (b.month !== a.month || b.week !== a.week) lines.push(`Planlægning: ${b.month || ''} uge ${b.week || ''} → ${a.month || ''} uge ${a.week || ''}`);
+	if (b.status !== a.status) lines.push(`Status: ${b.status || '—'} → ${a.status || '—'}`);
+	if (b.cat !== a.cat) lines.push(`Kategori: ${b.cat || '—'} → ${a.cat || '—'}`);
+	if (b.owner !== a.owner) lines.push(`Ansvarlig: ${b.owner || '—'} → ${a.owner || '—'}`);
+	if ((b.note || '') !== (a.note || '')) lines.push('Noter opdateret');
+	return lines;
 }
