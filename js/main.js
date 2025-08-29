@@ -308,8 +308,9 @@ function setupZoomControls() {
       if (!isPanning) return;
       const dx = e.clientX - lastMouseX;
       const dy = e.clientY - lastMouseY;
-      panX += dx;
-      panY += dy;
+      // smooth movement
+      panX += dx * 0.85;
+      panY += dy * 0.85;
       lastMouseX = e.clientX;
       lastMouseY = e.clientY;
       applyTransform();
@@ -323,12 +324,20 @@ function setupZoomControls() {
   }
 }
 function applyTransform() {
+  clampPan();
   wheelSvg.style.transformOrigin = '50% 50%';
   wheelSvg.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomLevel})`;
   settings.zoomLevel = zoomLevel;
   settings.panX = panX;
   settings.panY = panY;
   writeSettings(settings);
+}
+
+// Pan damping to keep wheel near center
+function clampPan() {
+  const max = 120; // limit px from center
+  panX = Math.max(-max, Math.min(max, panX));
+  panY = Math.max(-max, Math.min(max, panY));
 }
 
 // Ctrl+Scroll zoom

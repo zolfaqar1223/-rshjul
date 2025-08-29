@@ -20,21 +20,21 @@ export const CATS = [
 
 // Farver for kategorier – dybe, "luksuriøse" nuancer
 export const CAT_COLORS = {
-  'Releasemøde': '#8a2be2',     // BlueViolet
-  'Roadmapmøde': '#20b2aa',     // LightSeaGreen
-  'Netværksmøde': '#ff7f50',    // Coral
-  'KTU': '#ffd700',             // Gold
-  'Onboarding': '#7fffd4',      // Aquamarine
-  'Rapportmøde': '#ff69b4',     // HotPink
-  'Andet': '#87cefa'            // LightSkyBlue
+  'Releasemøde': '#6e5dcf',     // muted indigo
+  'Roadmapmøde': '#2e6f62',     // deep teal
+  'Netværksmøde': '#b56576',    // muted rose
+  'KTU': '#c2a83e',             // muted gold
+  'Onboarding': '#5aa39a',      // soft aquamarine
+  'Rapportmøde': '#a05a8a',     // mauve
+  'Andet': '#5f8fb3'            // steel blue
 };
 
 // Statusser og farver
 export const STATUSES = ['Planlagt', 'Igangværende', 'Afsluttet'];
 export const STATUS_COLORS = {
-  'Planlagt': '#5dade2',
-  'Igangværende': '#58d68d',
-  'Afsluttet': '#a6acaf'
+  'Planlagt': '#4e89ae',        // steel blue
+  'Igangværende': '#46a37c',    // muted green
+  'Afsluttet': '#8a9099'        // warm gray
 };
 
 const ITEMS_KEY = 'årshjul.admin.items';

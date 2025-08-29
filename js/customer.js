@@ -161,8 +161,9 @@ function render(focusedMonth = null) {
   };
   drawWheel(wheelSvg, items, callbacks, { focusedMonth });
   // Apply zoom on customer wheel similar to main
+  clampPanCustomer();
   wheelSvg.style.transformOrigin = '50% 50%';
-  wheelSvg.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomLevel})`;
+  wheelSvg.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomLevel})`.replace('{panX}', panX).replace('{panY}', panY);
   const listItems = focusedMonth ? items.filter(x => x.month === focusedMonth) : items;
   renderListReadOnly(listContainer, listItems);
   renderMonthNotes(monthNotesList);
@@ -175,6 +176,13 @@ function render(focusedMonth = null) {
       listEl.style.display = listEl.style.display === 'none' ? '' : 'none';
     });
   }
+}
+
+// clamp + smooth helpers for customer
+function clampPanCustomer() {
+  const max = 100;
+  panX = Math.max(-max, Math.min(max, panX));
+  panY = Math.max(-max, Math.min(max, panY));
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -238,8 +246,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!isPanning) return;
       const dx = e.clientX - lastMouseX;
       const dy = e.clientY - lastMouseY;
-      panX += dx;
-      panY += dy;
+      panX += dx * 0.85;
+      panY += dy * 0.85;
       lastMouseX = e.clientX;
       lastMouseY = e.clientY;
       render();
