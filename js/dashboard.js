@@ -141,6 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Charts
 	renderStatusDonut(items);
 	renderCategoryBars(items);
+	renderTrend(items);
 
 	// Risks and resources
 	renderRisks(items);
@@ -213,6 +214,33 @@ function renderCategoryBars(items) {
 		label.textContent = `${row.c} (${row.n})`;
 		svg.appendChild(label);
 	});
+}
+
+function renderTrend(items) {
+	const svg = document.getElementById('trendLine');
+	if (!svg) return;
+	svg.innerHTML = '';
+	const months = Array.from({ length: 12 }, (_, i) => i);
+	const counts = months.map(m => items.filter(i => (i.status||'Planlagt') === 'Afsluttet' && MONTHS.indexOf(i.month) === m).length);
+	const w = 340, h = 120, pad = 22;
+	const max = Math.max(1, ...counts);
+	const stepX = (w - pad*2) / (counts.length - 1);
+	let d = '';
+	counts.forEach((c, idx) => {
+		const x = pad + idx * stepX;
+		const y = h - pad - (c / max) * (h - pad*2);
+		d += (idx === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`);
+		const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+		dot.setAttribute('cx', String(x)); dot.setAttribute('cy', String(y)); dot.setAttribute('r', '2.5');
+		dot.setAttribute('fill', 'var(--accent)');
+		svg.appendChild(dot);
+	});
+	const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+	path.setAttribute('d', d);
+	path.setAttribute('fill', 'none');
+	path.setAttribute('stroke', 'var(--accent)');
+	path.setAttribute('stroke-width', '2');
+	svg.appendChild(path);
 }
 
 // ===== Risks & Resources =====
@@ -289,7 +317,11 @@ function renderResources(items) {
 	rows.forEach(r => {
 		const d = document.createElement('div');
 		d.className = 'item glass';
-		d.innerHTML = `<div class="item-content"><strong>${r.o}</strong><div class="meta">${r.n} aktiviteter</div></div>`;
+		const level = r.n >= 10 ? 'kritisk' : r.n >= 6 ? 'høj' : 'normal';
+		const color = level === 'kritisk' ? '#F87171' : level === 'høj' ? '#D4AF37' : 'var(--accent)';
+		const pct = Math.min(100, r.n * 10);
+		const bar = `<div style="margin-top:6px;height:6px;border-radius:6px;background:rgba(255,255,255,0.08);"><div style="height:6px;border-radius:6px;width:${pct}%;background:${color};"></div></div>`;
+		d.innerHTML = `<div class="item-content"><strong>${r.o}</strong><div class="meta">${r.n} aktiviteter · Belastning: ${level}</div>${bar}</div>`;
 		el.appendChild(d);
 	});
 
