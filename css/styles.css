@@ -1,14 +1,14 @@
 /* Globale stilregler og layout til KMD Årshjul.  */
 :root {
-  --bg: #002a2a;
-  --panel: #0a3834;
-  --muted: #1b4d45;
-  --text: #e5f2f0;
-  --accent: #00ffd1; /* neon aqua for high-end accent */
-  --q1: #6a00ff; /* electric violet */
-  --q2: #ff3b6b; /* hot pink */
-  --q3: #00e6ff; /* cyan */
-  --q4: #ffd166; /* warm gold */
+  --bg: #0F2F2E; /* Dark Teal */
+  --panel: #0A1B2A; /* Midnight Navy */
+  --muted: #2C2C34; /* Charcoal Slate */
+  --text: #E6E6EB; /* Soft Platinum */
+  --accent: #1F614E; /* Deep Emerald (brand accent/buttons) */
+  --q1: #0F2F2E; /* Dark Teal */
+  --q2: #1F614E; /* Deep Emerald for KMD logo and ring */
+  --q3: #0A1B2A; /* Midnight Navy */
+  --q4: #2C2C34; /* Charcoal Slate */
 }
 
 *,

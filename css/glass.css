@@ -2,8 +2,8 @@
   --glass-bg: rgba(255, 255, 255, 0.06);
   --glass-border: rgba(255, 255, 255, 0.18);
   --glass-inner: rgba(255, 255, 255, 0.06);
-  --neon: rgba(0, 255, 209, 0.55);
-  --neon-strong: rgba(0, 255, 209, 0.85);
+  --neon: rgba(212, 175, 55, 0.45); /* Champagne Gold glow */
+  --neon-strong: rgba(212, 175, 55, 0.75);
 }
 
 .glass {
