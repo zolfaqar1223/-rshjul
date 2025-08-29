@@ -16,13 +16,22 @@
     </div>
   </header>
   <main class="wrap" style="grid-template-columns: 1fr; grid-template-areas: 'acts';">
-    <section class="card glass" id="kpiSection">
+    <section class="card glass" id="kpiSection" style="gap:10px;">
       <h3>KPI’er</h3>
-      <div id="kpiGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px;"></div>
+      <div id="kpiBar" style="display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:14px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch;"></div>
     </section>
     <section class="card glass" id="insightsSection">
       <h3>Indsigter</h3>
       <div id="insights" class="list"></div>
+    </section>
+    <section class="card glass" id="listSection">
+      <h3 style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <span>Aktiviteter</span>
+        <span style="display:inline-flex;gap:8px;align-items:center;">
+          <button class="ghost" id="clearDashFilter" style="padding:4px 10px;">Vis alle</button>
+        </span>
+      </h3>
+      <div id="dashList" class="list"></div>
     </section>
   </main>
   <script type="module" src="js/dashboard.js"></script>

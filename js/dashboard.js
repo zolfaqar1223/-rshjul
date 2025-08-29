@@ -2,7 +2,7 @@
 // Simple KPI dashboard using stored items/notes
 import { MONTHS, readItems, readNotes, STATUSES, CATS } from './store.js';
 
-function createTile(title, value, color) {
+function createTile(key, title, value, color) {
 	const el = document.createElement('div');
 	el.className = 'glass';
 	el.style.padding = '16px';
@@ -10,6 +10,7 @@ function createTile(title, value, color) {
 	el.style.border = '1px solid rgba(255,255,255,0.12)';
 	el.style.background = 'linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.08))';
 	el.style.boxShadow = '0 22px 48px rgba(0,0,0,0.36), 0 0 0 1px rgba(255,255,255,0.08)';
+	el.style.cursor = 'pointer';
 	const h = document.createElement('div');
 	h.style.fontSize = '12px';
 	h.style.opacity = '0.9';
@@ -22,13 +23,16 @@ function createTile(title, value, color) {
 	v.textContent = value;
 	el.appendChild(h);
 	el.appendChild(v);
+	el.dataset.key = key;
 	return el;
 }
 
 function renderKPIs(items, notes) {
 	const grid = document.getElementById('kpiGrid');
-	if (!grid) return;
-	grid.innerHTML = '';
+	const bar = document.getElementById('kpiBar');
+	const container = bar || grid;
+	if (!container) return;
+	container.innerHTML = '';
 	const total = items.length;
 	const byStatus = STATUSES.reduce((acc, s) => (acc[s] = items.filter(i => (i.status || 'Planlagt') === s).length, acc), {});
 	const monthsCovered = new Set(items.map(i => i.month)).size;
@@ -41,14 +45,14 @@ function renderKPIs(items, notes) {
 	const byCat = CATS.map(c => ({ c, n: items.filter(i => i.cat === c).length }))
 		.sort((a,b) => b.n - a.n)[0];
 
-	grid.appendChild(createTile('Aktiviteter i alt', String(total), 'var(--text)'));
-	grid.appendChild(createTile('Planlagt', String(byStatus['Planlagt'] || 0), '#6EE7B7'));
-	grid.appendChild(createTile('Igangværende', String(byStatus['Igangværende'] || 0), '#A78BFA'));
-	grid.appendChild(createTile('Afsluttet', String(byStatus['Afsluttet'] || 0), '#2C2C34'));
-	grid.appendChild(createTile('Måneder dækket', String(monthsCovered), 'var(--text)'));
-	grid.appendChild(createTile('Månedsnoter', String(notesCount), '#D4AF37'));
-	grid.appendChild(createTile('Kommende aktiviteter', String(upcoming), '#60A5FA'));
-	if (byCat) grid.appendChild(createTile('Største kategori', `${byCat.c} (${byCat.n})`, '#E4B7B2'));
+	// KPI set for single full-width row
+	const config = [
+		{ key: 'thisMonth', title: 'Aktiviteter denne måned', value: String(items.filter(i => i.month === MONTHS[new Date().getMonth()]).length), color: 'var(--text)' },
+		{ key: 'upcoming', title: 'Kommende releases', value: String(upcoming), color: '#60A5FA' },
+		{ key: 'noOwner', title: 'Aktiviteter uden ansvarlig', value: String(items.filter(i => !i.owner || String(i.owner).trim() === '').length), color: '#E4B7B2' },
+		{ key: 'doneYear', title: 'Afsluttede aktiviteter i år', value: String(items.filter(i => (i.status || 'Planlagt') === 'Afsluttet').length), color: '#6EE7B7' }
+	];
+	config.forEach(k => container.appendChild(createTile(k.key, k.title, k.value, k.color)));
 }
 
 function renderInsights(items) {
@@ -81,4 +85,56 @@ document.addEventListener('DOMContentLoaded', () => {
 	const notes = readNotes();
 	renderKPIs(items, notes);
 	renderInsights(items);
+
+	// KPI click filtering of activity list
+	const list = document.getElementById('dashList');
+	const clearBtn = document.getElementById('clearDashFilter');
+	function renderListFiltered(arr) {
+		list.innerHTML = '';
+		if (!arr.length) {
+			const empty = document.createElement('div');
+			empty.className = 'item glass';
+			empty.textContent = 'Ingen aktiviteter matcher filteret';
+			list.appendChild(empty);
+			return;
+		}
+		arr.sort((a,b) => {
+			const ma = MONTHS.indexOf(a.month), mb = MONTHS.indexOf(b.month);
+			if (ma !== mb) return ma - mb;
+			if (a.week !== b.week) return a.week - b.week;
+			return a.title.localeCompare(b.title);
+		}).forEach(it => {
+			const el = document.createElement('div');
+			el.className = 'item glass';
+			el.innerHTML = `<div class="item-content"><strong>${it.title}</strong><div class="meta">${it.month} · Uge ${it.week} · ${it.cat} · ${(it.status||'Planlagt')}</div>${it.note ? `<div class="note">${it.note}</div>` : ''}</div>`;
+			list.appendChild(el);
+		});
+	}
+
+	function applyFilter(key) {
+		switch (key) {
+			case 'thisMonth':
+				return renderListFiltered(items.filter(i => i.month === MONTHS[new Date().getMonth()]));
+			case 'upcoming': {
+				const now = new Date();
+				const curIdx = now.getMonth() * 4 + Math.floor((now.getDate() - 1) / 7);
+				return renderListFiltered(items.filter(i => (MONTHS.indexOf(i.month) * 4 + (i.week - 1)) > curIdx));
+			}
+			case 'noOwner':
+				return renderListFiltered(items.filter(i => !i.owner || String(i.owner).trim() === ''));
+			case 'doneYear':
+				return renderListFiltered(items.filter(i => (i.status || 'Planlagt') === 'Afsluttet'));
+			default:
+				return renderListFiltered(items);
+		}
+	}
+
+	(document.getElementById('kpiBar') || document.getElementById('kpiGrid'))?.addEventListener('click', (e) => {
+		const tile = e.target.closest('.glass');
+		if (!tile || !tile.dataset.key) return;
+		applyFilter(tile.dataset.key);
+	});
+	if (clearBtn) clearBtn.addEventListener('click', () => renderListFiltered(items));
+	// initial list: show all
+	renderListFiltered(items);
 });
