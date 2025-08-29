@@ -3,7 +3,7 @@
 // DOM‑elementer ud fra en <template>. Event handlers kaldes via
 // callback‑objektet, så listen forbliver ren og uafhængig.
 
-import { sortItems, CAT_COLORS } from './store.js';
+import { sortItems, CAT_COLORS, STATUS_COLORS } from './store.js';
 
 /**
  * Render aktiviteter i en given container.
@@ -33,10 +33,17 @@ export function renderList(listEl, items, callbacks) {
     const color = CAT_COLORS[it.cat] || 'var(--accent)';
     badge.style.background = color;
     badge.style.borderColor = color;
+    const statusBadge = document.createElement('span');
+    statusBadge.className = 'chip';
+    const sColor = STATUS_COLORS[it.status || 'Planlagt'] || '#999';
+    statusBadge.style.background = sColor;
+    statusBadge.style.borderColor = sColor;
+    statusBadge.textContent = it.status || 'Planlagt';
     meta.innerHTML = '';
     meta.appendChild(badge);
+    meta.appendChild(statusBadge);
     const dateStr = new Date().toLocaleDateString('da-DK');
-    meta.append(`${it.month} · ${dateStr}`);
+    meta.append(` ${it.month} · ${dateStr}`);
     el.querySelector('.note').textContent = it.note || '';
     // more breathing room between tag and meta
     el.querySelector('.item-content').style.display = 'grid';

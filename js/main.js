@@ -5,6 +5,7 @@
 import {
   MONTHS,
   CATS,
+  STATUSES,
   readItems,
   writeItems,
   readNotes,
@@ -26,6 +27,7 @@ let editingId = null;
 // View state
 let focusedMonth = null;
 let activeCategory = 'Alle';
+let activeStatus = 'Alle';
 let zoomLevel = 1;
 let settings = {};
 // Pan state for wheel
@@ -40,6 +42,7 @@ let lastMouseY = 0;
 const dateInput = document.getElementById('date');
 const titleInput = document.getElementById('title');
 const categorySelect = document.getElementById('category');
+const statusSelect = document.getElementById('status');
 const notesInput = document.getElementById('notes');
 const filesInput = document.getElementById('files');
 const chipsContainer = document.getElementById('chips');
@@ -55,6 +58,15 @@ function initSelects() {
     opt.textContent = c;
     categorySelect.appendChild(opt);
   });
+  if (statusSelect) {
+    statusSelect.innerHTML = '';
+    STATUSES.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s;
+      opt.textContent = s;
+      statusSelect.appendChild(opt);
+    });
+  }
 }
 
 function initChips() {
@@ -140,6 +152,7 @@ function saveItem() {
   const week = Math.max(1, Math.min(5, Math.ceil(day / 7)));
   const title = titleInput.value.trim();
   const cat = categorySelect.value;
+  const status = (statusSelect && statusSelect.value) || 'Planlagt';
   const note = notesInput.value.trim();
   const savedDateIso = baseDate.toISOString();
   // attachments: read files as base64 array (name + data)
@@ -155,12 +168,12 @@ function saveItem() {
   if (editingId) {
     const idx = items.findIndex(x => x.id === editingId);
     if (idx > -1) {
-      items[idx] = { ...items[idx], month, week, title, cat, note, date: savedDateIso, attachments };
+      items[idx] = { ...items[idx], month, week, title, cat, status, note, date: savedDateIso, attachments };
     }
     editingId = null;
   } else {
     const id = generateId();
-    items.push({ id, month, week, title, cat, note, date: savedDateIso, attachments });
+    items.push({ id, month, week, title, cat, status, note, date: savedDateIso, attachments });
   }
   writeItems(items);
   resetForm();
@@ -358,10 +371,27 @@ function setActivitiesExpanded(expanded) {
   writeSettings(settings);
 }
 
+// Status filter dropdown
+function initStatusFilter() {
+  const sel = document.getElementById('statusFilter');
+  if (!sel) return;
+  if (settings.activeStatus) activeStatus = settings.activeStatus;
+  sel.value = activeStatus;
+  sel.addEventListener('change', () => {
+    activeStatus = sel.value;
+    settings.activeStatus = activeStatus;
+    writeSettings(settings);
+    render();
+  });
+}
+
 // ====== Render-funktion ======
 function render() {
   // Filter
-  const filtered = activeCategory === 'Alle' ? items : items.filter(x => x.cat === activeCategory);
+  let filtered = activeCategory === 'Alle' ? items : items.filter(x => x.cat === activeCategory);
+  if (activeStatus !== 'Alle') {
+    filtered = filtered.filter(x => x.status === activeStatus);
+  }
 
   // Listen
   renderList(listContainer, filtered, {
@@ -369,6 +399,7 @@ function render() {
       editingId = item.id;
       titleInput.value = item.title;
       categorySelect.value = item.cat;
+      if (statusSelect) statusSelect.value = item.status || 'Planlagt';
       notesInput.value = item.note || '';
       if (dateInput) dateInput.value = '';
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -440,6 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
   notes = readNotes();
   settings = readSettings();
   if (settings.activeCategory) activeCategory = settings.activeCategory;
+  if (settings.activeStatus) activeStatus = settings.activeStatus;
   if (settings.zoomLevel) zoomLevel = settings.zoomLevel;
   if (typeof settings.panX === 'number') panX = settings.panX;
   if (typeof settings.panY === 'number') panY = settings.panY;
@@ -449,6 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initChips();
   initFilterChips();
   initListFilters();
+  initStatusFilter();
   setupShareModal();
   setupZoomControls();
   setupWheelScrollZoom();

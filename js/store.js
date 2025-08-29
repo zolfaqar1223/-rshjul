@@ -29,6 +29,14 @@ export const CAT_COLORS = {
   'Andet': '#87cefa'            // LightSkyBlue
 };
 
+// Statusser og farver
+export const STATUSES = ['Planlagt', 'Igangværende', 'Afsluttet'];
+export const STATUS_COLORS = {
+  'Planlagt': '#5dade2',
+  'Igangværende': '#58d68d',
+  'Afsluttet': '#a6acaf'
+};
+
 const ITEMS_KEY = 'årshjul.admin.items';
 const NOTES_KEY = 'årshjul.admin.notes';
 const SETTINGS_KEY = 'årshjul.admin.settings';

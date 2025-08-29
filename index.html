@@ -30,6 +30,13 @@
       <label for="category">Kategori
         <select id="category"></select>
       </label>
+      <label for="status">Status
+        <select id="status">
+          <option>Planlagt</option>
+          <option>Igangværende</option>
+          <option>Afsluttet</option>
+        </select>
+      </label>
       <label for="files">Vedhæft filer (vises i kundevisning)
         <input id="files" type="file" multiple />
       </label>
@@ -45,6 +52,15 @@
     <!-- Årshjul -->
     <section class="card glass wheel-wrap resizable">
       <div class="chips" id="filterChips"></div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px;">
+        <label for="statusFilter" style="font-size:12px;opacity:.9;">Status</label>
+        <select id="statusFilter">
+          <option value="Alle">Alle</option>
+          <option value="Planlagt">Planlagt</option>
+          <option value="Igangværende">Igangværende</option>
+          <option value="Afsluttet">Afsluttet</option>
+        </select>
+      </div>
       <svg id="wheel" viewBox="0 0 700 700" aria-label="Årshjul"></svg>
     </section>
     <!-- Liste -->
