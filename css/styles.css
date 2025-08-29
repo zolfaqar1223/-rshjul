@@ -255,7 +255,7 @@ textarea {
 }
 .calendar-view {
   border: 1px solid var(--muted);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 8px;
   background: #0f2f2a;
 }
@@ -266,7 +266,7 @@ textarea {
 }
 .week-row {
   border: 1px solid var(--muted);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 6px;
   background: rgba(255,255,255,0.04);
 }
@@ -278,7 +278,7 @@ textarea {
 .cal-item {
   background: rgba(255,255,255,0.05);
   border: 1px solid var(--muted);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 6px 8px;
   margin-top: 4px;
   cursor: pointer;
@@ -314,7 +314,7 @@ textarea {
   border: 1px solid var(--muted);
   color: var(--text);
   padding: 10px 12px;
-  border-radius: 10px;
+  border-radius: 12px;
   min-width: 220px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.3);
   animation: slideIn 180ms ease;
@@ -370,7 +370,7 @@ svg {
 .item {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 10px;
+  border-radius: 14px;
   padding: 14px 16px;
   display: flex;
   justify-content: space-between;
