@@ -33,7 +33,7 @@ header {
   gap: 14px;
   padding: 12px 16px;
   background: linear-gradient(180deg, rgba(0, 20, 25, 0.9), rgba(0, 20, 25, 0.6));
-  border-bottom: 1px solid var(--panel);
+  border-bottom: 1px solid transparent;
   position: sticky;
   top: 0;
   z-index: 10;
@@ -106,7 +106,7 @@ button {
 
 button.ghost {
   background: transparent;
-  border: 1px solid var(--muted);
+  border: 1px solid rgba(255,255,255,0.24);
   color: var(--text);
 }
 
@@ -149,7 +149,7 @@ button.ghost:hover {
 
 .card {
   background: var(--panel);
-  border: 1px solid var(--muted);
+  border: 1px solid transparent;
   border-radius: 16px;
   padding: 22px;
   display: flex;
@@ -242,7 +242,7 @@ textarea {
 }
 .tab {
   background: rgba(255,255,255,0.06);
-  border: 1px solid var(--muted);
+  border: 1px solid rgba(255,255,255,0.18);
   color: var(--text);
   padding: 6px 12px;
   border-radius: 10px;
@@ -254,7 +254,7 @@ textarea {
   border-color: var(--accent);
 }
 .calendar-view {
-  border: 1px solid var(--muted);
+  border: 1px solid transparent;
   border-radius: 12px;
   padding: 8px;
   background: #0f2f2a;
@@ -265,7 +265,7 @@ textarea {
   gap: 6px;
 }
 .week-row {
-  border: 1px solid var(--muted);
+  border: 1px solid transparent;
   border-radius: 12px;
   padding: 6px;
   background: rgba(255,255,255,0.04);
@@ -277,7 +277,7 @@ textarea {
 }
 .cal-item {
   background: rgba(255,255,255,0.05);
-  border: 1px solid var(--muted);
+  border: 1px solid transparent;
   border-radius: 12px;
   padding: 6px 8px;
   margin-top: 4px;
@@ -400,9 +400,9 @@ svg {
 }
 .item .meta { display: flex; align-items: center; gap: 10px; }
 /* Inline expandable details for list items */
-.inline-details { margin-top: 8px; border-top: 1px dashed var(--muted); padding-top: 8px; }
+.inline-details { margin-top: 8px; border-top: 1px dashed rgba(255,255,255,0.12); padding-top: 8px; }
 .attachments { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-.attach-chip { background: rgba(255,255,255,0.06); border: 1px solid var(--muted); padding: 4px 8px; border-radius: 999px; font-size: 11px; color: var(--text); text-decoration: none; }
+.attach-chip { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); padding: 4px 8px; border-radius: 999px; font-size: 11px; color: var(--text); text-decoration: none; }
 
 .actions {
   display: flex;
@@ -430,7 +430,7 @@ svg {
 
 .item button.ghost {
   background: transparent;
-  border: 1px solid var(--muted);
+  border: 1px solid rgba(255,255,255,0.24);
   color: var(--text);
 }
 .item button.ghost:hover {
@@ -454,7 +454,7 @@ svg {
 
 .sheet {
   background: var(--panel);
-  border: 1px solid var(--muted);
+  border: 1px solid transparent;
   border-radius: 16px;
   width: min(90vw, 860px);
   max-height: 90vh;
@@ -479,7 +479,7 @@ svg {
   width: 100%;
   min-height: 140px;
   border-radius: 8px;
-  border: 1px solid var(--muted);
+  border: 1px solid rgba(255,255,255,0.18);
   padding: 8px;
   background: #0f2f2a;
   color: var(--text);
@@ -526,7 +526,7 @@ body.customer #listSection { grid-area: acts; }
 .customer .viewer-modal.open { display: flex; }
 .customer .viewer-sheet {
   background: var(--panel);
-  border: 1px solid var(--muted);
+  border: 1px solid transparent;
   border-radius: 16px;
   width: min(90vw, 720px);
   max-height: 90vh;
@@ -550,7 +550,7 @@ body.customer #listSection { grid-area: acts; }
 }
 .customer .viewer-attachments .attach-chip {
   background: rgba(255,255,255,0.06);
-  border: 1px dashed var(--muted);
+  border: 1px dashed rgba(255,255,255,0.22);
   padding: 6px 10px;
   border-radius: 999px;
   font-size: 12px;
