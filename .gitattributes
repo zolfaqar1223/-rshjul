@@ -1,0 +1,18 @@
+* text=auto eol=lf
+
+# Enforce LF for web assets
+*.js text eol=lf
+*.ts text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.svg text eol=lf
+
+# Keep images binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+
